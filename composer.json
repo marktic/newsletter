@@ -1,0 +1,47 @@
+{
+  "name": "marktic/newsletter",
+  "type": "library",
+  "license": "MIT",
+  "description": "newsletters base objects",
+  "keywords": [],
+  "homepage": "https://github.com/marktic/newsletter",
+  "authors": [
+    {
+      "name": "Gabriel Solomon",
+      "email": "hello@gabrielsolomon.ro"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Marktic\\Newsletter\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Marktic\\Newsletter\\Tests\\": "tests/src",
+      "Marktic\\Newsletter\\Tests\\Fixtures\\": "tests/fixtures"
+    }
+  },
+  "require": {
+    "ext-json": "*",
+    "bytic/package-base": "^1.0",
+    "bytic/migrations": "^0.12",
+    "bytic/orm": "^0.9|^1.0",
+    "bytic/orm-filters": "^0.9|^1.0",
+    "bytic/orm-behaviors": "^0.9|^1.0",
+    "bytic/translation": "^0.9|^1.0"
+  },
+  "require-dev": {
+    "bytic/phpqatools": "^1.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": true,
+      "ergebnis/composer-normalize": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "bytic/phpqatools": true
+    }
+  }
+}

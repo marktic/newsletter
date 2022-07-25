@@ -45,11 +45,11 @@ class FindOrCreateList
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->checkOwnerWithArray($data);
 
-        $contactFound = $this->findByName($data['name'], $data['owner_id'], $data['owner']);
-        if ($contactFound) {
-            return $contactFound;
+        $recordFound = $this->findByName($data['name'], $data['owner_id'], $data['owner']);
+        if ($recordFound) {
+            return $recordFound;
         }
-        return $this->createRecord($this->data);
+        return $this->createRecord($data);
     }
 
     protected function executeForString($data): Record

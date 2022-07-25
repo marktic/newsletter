@@ -49,7 +49,7 @@ class FindOrCreateContact
         if ($contactFound) {
             return $contactFound;
         }
-        return $this->createRecord($this->data);
+        return $this->createRecord($data);
     }
 
     protected function executeForString($data)

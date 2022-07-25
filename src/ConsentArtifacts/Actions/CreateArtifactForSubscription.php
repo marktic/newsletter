@@ -29,7 +29,7 @@ class CreateArtifactForSubscription
         return $this;
     }
 
-    public function withConsentStatement($name = null, $text = null): static
+    public function withConsentStatement($text = null, $name = null): static
     {
         $this->data['consent'] = $name;
         $this->data['consent_statement'] = $text;
@@ -61,7 +61,7 @@ class CreateArtifactForSubscription
             'consent_id' => isset($this->data['consent']) ? $this->data['consent']->id : null,
             'statement_id' => isset($this->data['consent_statement']) ? $this->data['consent_statement']->id : null,
             'contact_id' => isset($this->data['contact']) ? $this->data['contact']->id : null,
-            'list_id' => isset($this->data['list']) ? $this->data['list']->id : null,
+            'subscription_id' => isset($this->data['subscription']) ? $this->data['subscription']->id : null,
         ];
 
         return $this->createRecord($data);
@@ -90,7 +90,6 @@ class CreateArtifactForSubscription
 
         $this->data['consent_statement']['consent_id'] = $this->data['consent']->id;
         $this->data['consent_statement'] = FindOrCreateConsentStatement::for($this->data['consent_statement'])
-            ->forOwner($this->owner, $this->owner_id)
             ->execute();
     }
 

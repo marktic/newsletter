@@ -4,7 +4,9 @@ namespace Marktic\Newsletter\Subscriptions\Actions;
 
 use Marktic\Newsletter\Base\Actions\Behaviours\HasOwner;
 use Marktic\Newsletter\Base\Actions\Behaviours\HasRepository;
+use Marktic\Newsletter\Consents\Actions\FindOrCreateConsent;
 use Marktic\Newsletter\Contacts\Actions\FindOrCreateContact;
+use Marktic\Newsletter\Lists\Actions\FindOrCreateList;
 use Marktic\Newsletter\Subscriptions\Models\NewsletterSubscription;
 use Marktic\Newsletter\Subscriptions\Models\NewsletterSubscriptions;
 use Marktic\Newsletter\Utility\NewsletterModels;
@@ -63,13 +65,18 @@ class FindOrCreateSubscription
             ->forOwner($this->owner, $this->owner_id)
             ->execute();
 
-        $list = FindOrCreateContact::for($this->list)
+        $list = FindOrCreateList::for($this->list)
+            ->forOwner($this->owner, $this->owner_id)
+            ->execute();
+
+        $consent = FindOrCreateConsent::for($this->consent)
             ->forOwner($this->owner, $this->owner_id)
             ->execute();
 
         $data = [
             'contact_id' => $contact->id,
             'list_id' => $list->id,
+            'consent_id' => $consent->id,
         ];
 
         $record =  $this->createRecord($data);

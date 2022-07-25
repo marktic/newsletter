@@ -30,8 +30,11 @@ class FindOrCreateConsent
         if (is_array($this->data)) {
             return $this->executeForArray($this->data);
         }
+        if (is_null($this->data)) {
+            $this->data = NewsletterConsents::DEFAULT_NAME;
+        }
         if (is_string($this->data)) {
-            return $this->executeForString($this->data);
+            return $this->executeForArray(['name' => $this->data]);
         }
 
         throw new InvalidConsent();
@@ -49,12 +52,7 @@ class FindOrCreateConsent
             return $recordFound;
         }
 
-        return $this->createRecord($this->data);
-    }
-
-    protected function executeForString($data)
-    {
-        return $this->executeForArray(['name' => $data]);
+        return $this->createRecord($data);
     }
 
     protected function findByName($email, $owner_id, $owner): ?Record
@@ -64,7 +62,8 @@ class FindOrCreateConsent
                 ['name = ?', $email],
                 ['owner_id = ?', $owner_id],
                 ['owner = ?', $owner],
-            ]]);
+            ]
+        ]);
     }
 
     protected function generateRepository(): RecordManager

@@ -38,14 +38,14 @@ class FindOrCreateConsentStatement
 
     protected function executeForArray($data): Record
     {
-        $data['hash'] = $data['name'] ?? NewsletterConsents::DEFAULT_NAME;
+        $data['hash'] = BuildStatementHash::fromText($data['text']);
 
         $recordFound = $this->findByHash($data['hash'], $data['consent_id']);
         if ($recordFound) {
             return $recordFound;
         }
 
-        return $this->createRecord($this->data);
+        return $this->createRecord($data);
     }
 
     protected function executeForString($data)

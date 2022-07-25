@@ -6,9 +6,9 @@ trait HasData
 {
     protected $data;
 
-    public static function for(mixed $contact)
+    public static function for(mixed $data = null)
     {
-        return (new self())->withData($contact);
+        return (new self())->withData($data);
     }
 
     public function withData(mixed $data): self

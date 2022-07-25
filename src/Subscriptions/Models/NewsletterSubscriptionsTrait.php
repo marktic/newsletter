@@ -18,6 +18,22 @@ trait NewsletterSubscriptionsTrait
 //        });
     }
 
+    protected function initRelationsNewsletter(): void
+    {
+        $this->initRelationsNewsletterList();
+        $this->initRelationsNewsletterContact();
+    }
+
+    protected function initRelationsNewsletterList()
+    {
+        $this->belongsTo(NewsletterSubscriptions::RELATION_LIST, ['class' => get_class(NewsletterModels::lists())]);
+    }
+
+    protected function initRelationsNewsletterContact()
+    {
+        $this->belongsTo(NewsletterSubscriptions::RELATION_CONTACT, ['class' => get_class(NewsletterModels::contacts())]);
+    }
+
     public function generatePrimaryFK(): string
     {
         return 'subscription_id';

@@ -17,4 +17,8 @@ class NewsletterSubscriptions extends RecordManager
     public const TABLE = 'mkt_newsletter_subscriptions';
     public const CONTROLLER = 'mkt_newsletter_subscriptions';
 
+    public const RELATION_LIST = 'newsletterContact';
+    public const RELATION_CONTACT = 'newsletterList';
+
+
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class NewsletterConsentsTable extends AbstractMigration
+final class NewsletterConsentStatementsTable extends AbstractMigration
 {
     /**
      * Change Method.

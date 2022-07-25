@@ -40,8 +40,9 @@ final class NewsletterSubscriptionsTable extends AbstractMigration
 
         $table
             ->addIndex(['contact_id'])
+            ->addIndex(['list_id'])
             ->addIndex(['consent_id'])
-            ->addIndex(['email']);
+            ;
 
         $table->save();
     }

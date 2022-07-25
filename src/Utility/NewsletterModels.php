@@ -3,6 +3,7 @@
 namespace Marktic\Newsletter\Utility;
 
 use ByTIC\PackageBase\Utility\ModelFinder;
+use Marktic\Newsletter\ConsentArtifacts\Models\NewsletterConsentArtifacts;
 use Marktic\Newsletter\Consents\Models\NewsletterConsents;
 use Marktic\Newsletter\ConsentStatements\Models\NewsletterConsentStatements;
 use Marktic\Newsletter\Contacts\Models\NewsletterContacts;
@@ -22,6 +23,7 @@ class NewsletterModels extends ModelFinder
     public const CONTACTS = 'contacts';
     public const CONSENTS = 'consents';
     public const CONSENT_STATEMENTS = 'consent_statements';
+    public const CONSENT_ARTIFACTS = 'consent_artifacts';
 
     /**
      * @return NewsletterLists|RecordManager
@@ -63,6 +65,13 @@ class NewsletterModels extends ModelFinder
         return static::getModels(self::CONSENT_STATEMENTS, NewsletterConsentStatements::class);
     }
 
+    /**
+     * @return NewsletterConsentStatements
+     */
+    public static function consentArtifacts()
+    {
+        return static::getModels(self::CONSENT_ARTIFACTS, NewsletterConsentArtifacts::class);
+    }
 
     protected static function packageName(): string
     {

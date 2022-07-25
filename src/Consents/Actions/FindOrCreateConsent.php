@@ -1,28 +1,29 @@
 <?php
 
-namespace Marktic\Newsletter\Lists\Actions;
+namespace Marktic\Newsletter\Consents\Actions;
 
 use Marktic\Newsletter\Base\Actions\Behaviours\HasData;
 use Marktic\Newsletter\Base\Actions\Behaviours\HasOwner;
 use Marktic\Newsletter\Base\Actions\Behaviours\HasRepository;
-use Marktic\Newsletter\Contacts\Models\NewsletterContact;
-use Marktic\Newsletter\Lists\Exceptions\InvalidList;
+use Marktic\Newsletter\Consents\Exceptions\InvalidConsent;
+use Marktic\Newsletter\Consents\Models\NewsletterConsent;
+use Marktic\Newsletter\Consents\Models\NewsletterConsents;
 use Marktic\Newsletter\Utility\NewsletterModels;
 use Nip\Records\AbstractModels\Record;
 use Nip\Records\AbstractModels\RecordManager;
 
-class FindOrCreateList
+class FindOrCreateConsent
 {
     use HasOwner;
     use HasRepository;
     use HasData;
 
     /**
-     * @throws InvalidList
+     * @throws InvalidConsent
      */
     public function execute()
     {
-        if ($this->data instanceof NewsletterContact) {
+        if ($this->data instanceof NewsletterConsent) {
             return $this->data;
         }
 
@@ -33,35 +34,34 @@ class FindOrCreateList
             return $this->executeForString($this->data);
         }
 
-        throw new InvalidList();
+        throw new InvalidConsent();
     }
 
     protected function executeForArray($data): Record
     {
-        if (empty($data['name'])) {
-            throw new InvalidList("Missing name in newsletter list data");
-        }
+        $data['name'] = $data['name'] ?? NewsletterConsents::DEFAULT_NAME;
 
         /** @noinspection PhpUnhandledExceptionInspection */
         $this->checkOwnerWithArray($data);
 
-        $contactFound = $this->findByName($data['name'], $data['owner_id'], $data['owner']);
-        if ($contactFound) {
-            return $contactFound;
+        $recordFound = $this->findByName($data['name'], $data['owner_id'], $data['owner']);
+        if ($recordFound) {
+            return $recordFound;
         }
+
         return $this->createRecord($this->data);
     }
 
-    protected function executeForString($data): Record
+    protected function executeForString($data)
     {
         return $this->executeForArray(['name' => $data]);
     }
 
-    protected function findByName($name, $owner_id, $owner): ?Record
+    protected function findByName($email, $owner_id, $owner): ?Record
     {
         return $this->repository->findOneByParams([
             'where' => [
-                ['name = ?', $name],
+                ['name = ?', $email],
                 ['owner_id = ?', $owner_id],
                 ['owner = ?', $owner],
             ]]);
@@ -69,6 +69,6 @@ class FindOrCreateList
 
     protected function generateRepository(): RecordManager
     {
-        return NewsletterModels::lists();
+        return NewsletterModels::consents();
     }
 }

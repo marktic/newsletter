@@ -3,8 +3,8 @@
 namespace Marktic\Newsletter\ConsentStatements\Models;
 
 use Marktic\Newsletter\Base\Models\Behaviours\HasId\RecordHasId;
-use Marktic\Newsletter\Base\Models\Behaviours\HasOwner\HasOwnerRecordTrait;
 use Marktic\Newsletter\Base\Models\Behaviours\Timestampable\TimestampableTrait;
+use Marktic\Newsletter\ConsentStatements\Actions\BuildStatementHash;
 
 /**
  * Trait NewsletterConsentTrait
@@ -44,6 +44,6 @@ trait NewsletterConsentStatementTrait
 
     protected function updateHash(): void
     {
-        $this->hash = md5($this->text);
+        $this->hash = BuildStatementHash::fromText($this->text);
     }
 }

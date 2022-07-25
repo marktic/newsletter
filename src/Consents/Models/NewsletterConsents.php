@@ -16,5 +16,5 @@ class NewsletterConsents extends RecordManager
 
     public const TABLE = 'mkt_newsletter_consents';
     public const CONTROLLER = 'mkt_newsletter_consents';
-
+    public const DEFAULT_NAME = 'general_consent';
 }

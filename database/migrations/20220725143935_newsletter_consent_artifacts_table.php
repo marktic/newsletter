@@ -51,25 +51,25 @@ final class NewsletterConsentArtifactsTable extends AbstractMigration
                 'consent_id',
                 'mkt_newsletter_consents',
                 'id',
-                ['constraint' => 'mkt_newsletter_consents_consent_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
+                ['constraint' => 'mkt_newsletter_consent_artifacts_consent_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
             )
             ->addForeignKey(
                 'statement_id',
                 'mkt_newsletter_consent_statements',
                 'id',
-                ['constraint' => 'mkt_newsletter_consent_statements_statement_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
+                ['constraint' => 'mkt_newsletter_consent_artifacts_statement_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
             )
             ->addForeignKey(
                 'contact_id',
                 'mkt_newsletter_contacts',
                 'id',
-                ['constraint' => 'mkt_newsletter_contacts_contact_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
+                ['constraint' => 'mkt_newsletter_consent_artifacts_contact_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
             )
             ->addForeignKey(
                 'subscription_id',
                 'mkt_newsletter_subscriptions',
                 'id',
-                ['constraint' => 'mkt_newsletter_subscriptions_subscription_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
+                ['constraint' => 'mkt_newsletter_consent_artifacts_subscription_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
             )
             ->save();
     }

@@ -49,19 +49,19 @@ final class NewsletterSubscriptionsTable extends AbstractMigration
                 'contact_id',
                 'mkt_newsletter_contacts',
                 'id',
-                ['constraint' => 'mkt_newsletter_contacts_contact_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
+                ['constraint' => 'mkt_newsletter_subscriptions_contact_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
             )
             ->addForeignKey(
                 'list_id',
                 'mkt_newsletter_lists',
                 'id',
-                ['constraint' => 'mkt_newsletter_lists_list_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
+                ['constraint' => 'mkt_newsletter_subscriptions_list_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
             )
             ->addForeignKey(
                 'consent_id',
                 'mkt_newsletter_consents',
                 'id',
-                ['constraint' => 'mkt_newsletter_consents_consent_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
+                ['constraint' => 'mkt_newsletter_subscriptions_consent_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
             )
             ->save();
     }

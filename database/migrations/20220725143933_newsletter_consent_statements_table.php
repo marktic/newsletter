@@ -48,7 +48,7 @@ final class NewsletterConsentStatementsTable extends AbstractMigration
                 'consent_id',
                 'mkt_newsletter_consents',
                 'id',
-                ['constraint' => 'mkt_newsletter_consents_consent_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
+                ['constraint' => 'mkt_newsletter_consent_statements_consent_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
             )
             ->save();
     }

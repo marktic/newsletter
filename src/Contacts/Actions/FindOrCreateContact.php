@@ -26,6 +26,16 @@ class FindOrCreateContact
             return $this->data;
         }
 
+        if ($this->data instanceof Record)  {
+            return $this->executeForArray([
+                'email' => $this->data->email,
+                'first_name' => $this->data->first_name,
+                'last_name' => $this->data->last_name,
+                'record_id' => $this->data->id,
+                'record_type' => $this->data->getManager()->getMorphName(),
+            ]);
+        }
+
         if (is_array($this->data)) {
             return $this->executeForArray($this->data);
         }

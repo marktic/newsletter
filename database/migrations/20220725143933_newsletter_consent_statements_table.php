@@ -40,8 +40,16 @@ final class NewsletterConsentStatementsTable extends AbstractMigration
 
         $table
             ->addIndex(['consent_id'])
-            ->addIndex(['hash'], ['unique' => true]);
+            ->addIndex(['hash'], ['unique' => true])
+            ->save();
 
-        $table->save();
+        $table
+            ->addForeignKey(
+                'consent_id',
+                'mkt_newsletter_consents',
+                'id',
+                ['constraint' => 'mkt_newsletter_consents_consent_id', 'delete' => 'NO_ACTION', 'update' => 'NO_ACTION']
+            )
+            ->save();
     }
 }

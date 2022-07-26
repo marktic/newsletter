@@ -10,6 +10,7 @@ use Marktic\Newsletter\Lists\Actions\FindOrCreateList;
 use Marktic\Newsletter\Subscriptions\Models\NewsletterSubscription;
 use Marktic\Newsletter\Subscriptions\Models\NewsletterSubscriptions;
 use Marktic\Newsletter\Utility\NewsletterModels;
+use Nip\Records\AbstractModels\Record;
 use Nip\Records\AbstractModels\RecordManager;
 
 class FindOrCreateSubscription
@@ -79,11 +80,26 @@ class FindOrCreateSubscription
             'consent_id' => $consent->id,
         ];
 
-        $record =  $this->createRecord($data);
+        $contactFound = $this->findRecord($data);
+        if ($contactFound) {
+            return $contactFound;
+        }
+
+        $record = $this->createRecord($data);
         $record->getRelation(NewsletterSubscriptions::RELATION_CONTACT)->setResults($contact);
         $record->getRelation(NewsletterSubscriptions::RELATION_LIST)->setResults($list);
 
         return $record;
+    }
+
+    protected function findRecord($data): ?Record
+    {
+        return $this->repository->findOneByParams([
+            'where' => [
+                ['contact_id = ?', $data['contact_id']],
+                ['list_id = ?', $data['list_id']],
+                ['consent_id = ?', $data['consent_id']],
+            ]]);
     }
 
     protected function generateRepository(): RecordManager

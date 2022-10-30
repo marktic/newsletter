@@ -3,12 +3,14 @@
 namespace Marktic\Newsletter\Subscriptions\Models;
 
 use Marktic\Newsletter\Base\Models\Behaviours\Timestampable\TimestampableManagerTrait;
+use Marktic\Newsletter\Base\Models\Traits\HasDatabaseConnectionTrait;
 use Marktic\Newsletter\Utility\NewsletterModels;
 use Marktic\Newsletter\Utility\PackageConfig;
 
 trait NewsletterSubscriptionsTrait
 {
     use TimestampableManagerTrait;
+    use HasDatabaseConnectionTrait;
 
     protected function bootNewsletterSubscriptionsTrait()
     {

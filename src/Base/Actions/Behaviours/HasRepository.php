@@ -24,9 +24,14 @@ trait HasRepository
 
     protected function createRecord($data): Record
     {
-        $contact = $this->repository->getNewRecord($data);
+        $contact = $this->generateNewRecord($data);
         $contact->save();
         return $contact;
+    }
+
+    protected function generateNewRecord($data): Record
+    {
+        return $this->repository->getNewRecord($data);
     }
 
     abstract protected function generateRepository(): RecordManager;

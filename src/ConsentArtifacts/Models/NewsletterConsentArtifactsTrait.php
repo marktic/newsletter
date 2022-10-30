@@ -4,12 +4,14 @@ namespace Marktic\Newsletter\ConsentArtifacts\Models;
 
 use Marktic\Newsletter\Base\Models\Behaviours\HasOwner\HasOwnerRepositoryTrait;
 use Marktic\Newsletter\Base\Models\Behaviours\Timestampable\TimestampableManagerTrait;
+use Marktic\Newsletter\Base\Models\Traits\HasDatabaseConnectionTrait;
 use Marktic\Newsletter\Utility\NewsletterModels;
 use Marktic\Newsletter\Utility\PackageConfig;
 
 trait NewsletterConsentArtifactsTrait
 {
     use TimestampableManagerTrait;
+    use HasDatabaseConnectionTrait;
 
     protected function bootNewsletterConsentsTrait()
     {

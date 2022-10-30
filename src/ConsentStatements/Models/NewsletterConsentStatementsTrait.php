@@ -3,12 +3,14 @@
 namespace Marktic\Newsletter\ConsentStatements\Models;
 
 use Marktic\Newsletter\Base\Models\Behaviours\Timestampable\TimestampableManagerTrait;
+use Marktic\Newsletter\Base\Models\Traits\HasDatabaseConnectionTrait;
 use Marktic\Newsletter\Utility\NewsletterModels;
 use Marktic\Newsletter\Utility\PackageConfig;
 
 trait NewsletterConsentStatementsTrait
 {
     use TimestampableManagerTrait;
+    use HasDatabaseConnectionTrait;
 
     protected function bootNewsletterConsentsTrait()
     {

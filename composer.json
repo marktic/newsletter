@@ -38,7 +38,8 @@
     "bytic/view": "^1.0|^2.0",
     "bytic/form": "^1.0|^2.0",
     "bytic/admin-base": "^1.0|^2.0",
-    "bytic/phpqatools": "^1.0"
+    "bytic/phpqatools": "^1.0",
+    "bytic/report-generator": "^1.0 || ^2.0"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,

@@ -6,6 +6,7 @@ namespace Marktic\Newsletter\Bundle\Controllers\Admin;
 
 use Marktic\Newsletter\Bundle\Controllers\Base\Behaviours\HasNewsletterOwnerTrait;
 use Marktic\Newsletter\NewsletterOwners\Dto\NewsletterOwner;
+use Marktic\Newsletter\Subscriptions\Actions\Reports\BuildCompleteSubscriptionsReport;
 use Marktic\Newsletter\Utility\NewsletterModels;
 use Nip\Controllers\Response\ResponsePayload;
 
@@ -15,6 +16,12 @@ use Nip\Controllers\Response\ResponsePayload;
 trait SubscriptionsControllerTrait
 {
     use HasNewsletterOwnerTrait;
+
+    public function export()
+    {
+        BuildCompleteSubscriptionsReport::fromRequestFilters($this->getRequestFilters())
+            ->render();
+    }
 
     protected function indexPrepareItems($items)
     {

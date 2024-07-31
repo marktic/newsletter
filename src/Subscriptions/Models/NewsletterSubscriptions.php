@@ -15,7 +15,7 @@ class NewsletterSubscriptions extends RecordManager
     use CommonRecordsTrait;
 
     public const TABLE = 'mkt_newsletter_subscriptions';
-    public const CONTROLLER = 'mkt_newsletter_subscriptions';
+    public const CONTROLLER = 'mkt_newsletter-subscriptions';
 
     public const RELATION_LIST = 'NewsletterContact';
     public const RELATION_CONTACT = 'NewsletterList';

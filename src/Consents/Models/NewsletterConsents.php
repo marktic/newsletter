@@ -15,6 +15,6 @@ class NewsletterConsents extends RecordManager
     use CommonRecordsTrait;
 
     public const TABLE = 'mkt_newsletter_consents';
-    public const CONTROLLER = 'mkt_newsletter_consents';
+    public const CONTROLLER = 'mkt_newsletter-consents';
     public const DEFAULT_NAME = 'general_consent';
 }

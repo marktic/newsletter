@@ -25,13 +25,18 @@
   "require": {
     "ext-json": "*",
     "bytic/package-base": "^1.0",
-    "bytic/migrations": "^0.12|^0.13",
+    "bytic/controllers": "^1.0|^2.0",
+    "bytic/controllers-extra": "^1.0|^2.0",
+    "bytic/migrations": "~0.13",
     "bytic/orm": "^0.9|^1.0|^2.0",
     "bytic/orm-filters": "^0.9|^1.0|^2.0",
     "bytic/orm-behaviors": "^0.9|^1.0|^2.0",
     "bytic/translation": "^0.9|^1.0|^2.0"
   },
   "require-dev": {
+    "bytic/view": "^1.0|^2.0",
+    "bytic/form": "^1.0|^2.0",
+    "bytic/admin-base": "^1.0|^2.0",
     "bytic/phpqatools": "^1.0"
   },
   "minimum-stability": "dev",

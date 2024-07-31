@@ -3,10 +3,10 @@
 namespace Marktic\Newsletter\Lists\Actions;
 
 use Marktic\Newsletter\Base\Actions\Behaviours\HasData;
-use Marktic\Newsletter\Base\Actions\Behaviours\HasOwner;
 use Marktic\Newsletter\Base\Actions\Behaviours\HasRepository;
 use Marktic\Newsletter\Contacts\Models\NewsletterContact;
 use Marktic\Newsletter\Lists\Exceptions\InvalidList;
+use Marktic\Newsletter\NewsletterOwners\Actions\Behaviours\HasOwner;
 use Marktic\Newsletter\Utility\NewsletterModels;
 use Nip\Records\AbstractModels\Record;
 use Nip\Records\AbstractModels\RecordManager;

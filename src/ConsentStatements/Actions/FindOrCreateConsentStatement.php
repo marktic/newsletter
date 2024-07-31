@@ -3,14 +3,10 @@
 namespace Marktic\Newsletter\ConsentStatements\Actions;
 
 use Marktic\Newsletter\Base\Actions\Behaviours\HasData;
-use Marktic\Newsletter\Base\Actions\Behaviours\HasOwner;
 use Marktic\Newsletter\Base\Actions\Behaviours\HasRepository;
 use Marktic\Newsletter\Consents\Exceptions\InvalidConsent;
-use Marktic\Newsletter\Consents\Models\NewsletterConsent;
-use Marktic\Newsletter\Consents\Models\NewsletterConsents;
 use Marktic\Newsletter\ConsentStatements\Exceptions\InvalidConsentStatement;
 use Marktic\Newsletter\ConsentStatements\Models\NewsletterConsentStatement;
-use Marktic\Newsletter\Contacts\Models\NewsletterContact;
 use Marktic\Newsletter\Utility\NewsletterModels;
 use Nip\Records\AbstractModels\Record;
 use Nip\Records\AbstractModels\RecordManager;

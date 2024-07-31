@@ -2,11 +2,11 @@
 
 namespace Marktic\Newsletter\Subscriptions\Actions;
 
-use Marktic\Newsletter\Base\Actions\Behaviours\HasOwner;
 use Marktic\Newsletter\Base\Actions\Behaviours\HasRepository;
 use Marktic\Newsletter\Consents\Actions\FindOrCreateConsent;
 use Marktic\Newsletter\Contacts\Actions\FindOrCreateContact;
 use Marktic\Newsletter\Lists\Actions\FindOrCreateList;
+use Marktic\Newsletter\NewsletterOwners\Actions\Behaviours\HasOwner;
 use Marktic\Newsletter\Subscriptions\Models\NewsletterSubscription;
 use Marktic\Newsletter\Subscriptions\Models\NewsletterSubscriptions;
 use Marktic\Newsletter\Utility\NewsletterModels;

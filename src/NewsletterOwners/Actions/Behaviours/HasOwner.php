@@ -1,6 +1,6 @@
 <?php
 
-namespace Marktic\Newsletter\Base\Actions\Behaviours;
+namespace Marktic\Newsletter\NewsletterOwners\Actions\Behaviours;
 
 use Marktic\Newsletter\Base\Exceptions\NewsletterException;
 

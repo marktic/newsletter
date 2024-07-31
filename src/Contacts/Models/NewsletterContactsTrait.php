@@ -29,7 +29,7 @@ trait NewsletterContactsTrait
 
     public function generatePrimaryFK()
     {
-        return 'list_id';
+        return 'contact_id';
     }
 
     protected function generateTable(): string

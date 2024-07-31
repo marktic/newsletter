@@ -11,12 +11,17 @@ use Nip\Records\RecordManager;
  */
 class NewsletterSubscriptions extends RecordManager
 {
-    use NewsletterSubscriptionsTrait;
-    use CommonRecordsTrait;
+    use NewsletterSubscriptionsTrait, CommonRecordsTrait {
+        NewsletterSubscriptionsTrait::getFilterManagerClass insteadof CommonRecordsTrait;
+    }
 
     public const TABLE = 'mkt_newsletter_subscriptions';
     public const CONTROLLER = 'mkt_newsletter-subscriptions';
 
-    public const RELATION_LIST = 'NewsletterContact';
-    public const RELATION_CONTACT = 'NewsletterList';
+    public const RELATION_LIST = 'NewsletterList';
+    public const RELATION_CONTACT = 'NewsletterContact';
+
+    public const RELATION_CONSENT = 'NewsletterConsent';
+
+    public const RELATION_CONSENT_ARTIFACTS = 'NewsletterConsentArtifacts';
 }

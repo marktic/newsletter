@@ -5,7 +5,7 @@ namespace Marktic\Newsletter\Lists\Actions;
 use Bytic\Actions\Action;
 use Bytic\Actions\Behaviours\Entities\FindRecords;
 use Marktic\Newsletter\NewsletterOwners\Actions\Behaviours\HasOwnerRecordTrait;
-use Marktic\Newsletter\Subscriptions\Actions\Behaviours\HasRepository;
+use Marktic\Newsletter\Lists\Actions\Behaviours\HasRepository;
 
 class FindListsForOwner extends Action
 {
@@ -16,7 +16,7 @@ class FindListsForOwner extends Action
     protected function findParams(): array
     {
         $params  = [];
-        $this->findParamsPopulateWithOwner($params);
+        $params = $this->findParamsPopulateWithOwner($params);
         return $params;
     }
 

@@ -16,4 +16,6 @@ class NewsletterConsentArtifacts extends RecordManager
 
     public const TABLE = 'mkt_newsletter_consent_artifacts';
     public const CONTROLLER = 'mkt_newsletter-consent_artifacts';
+
+    public const RELATION_CONSENT_STATEMENT = 'NewsletterConsentStatement';
 }

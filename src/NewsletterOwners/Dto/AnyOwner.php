@@ -2,7 +2,7 @@
 
 namespace Marktic\Newsletter\NewsletterOwners\Dto;
 
-class AnyOwner implements BillingOwner
+class AnyOwner implements NewsletterOwner
 {
     public const TYPE = 'admin';
 

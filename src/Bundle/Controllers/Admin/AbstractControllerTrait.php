@@ -15,7 +15,7 @@ trait AbstractControllerTrait
 {
     use \Marktic\Newsletter\Bundle\Controllers\Base\AbstractControllerTrait;
 
-    protected function registerViewPathsBilling(View $view): void
+    protected function registerViewPathsNewsletter(View $view): void
     {
         ViewUtility::registerViewPaths($view, 'admin');
     }

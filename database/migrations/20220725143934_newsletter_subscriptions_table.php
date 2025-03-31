@@ -26,7 +26,7 @@ final class NewsletterSubscriptionsTable extends AbstractMigration
         }
         $table = $this->table($table_name);
         $table
-            ->addColumn('contact_id', 'integer', ['null' => true])
+            ->addColumn('contact_id', 'integer', ['null' => true, 'unsigned' => true])
             ->addColumn('list_id', 'integer', ['null' => true])
             ->addColumn('consent_id', 'integer', ['null' => true])
             ->addColumn('channels', 'string', ['limit' => 255, 'null' => false])

@@ -26,8 +26,8 @@ final class NewsletterConsentArtifactsTable extends AbstractMigration
         }
         $table = $this->table($table_name);
         $table
-            ->addColumn('consent_id', 'integer', ['null' => true, 'unsigned' => true])
-            ->addColumn('statement_id', 'integer', ['null' => true])
+            ->addColumn('consent_id', 'integer', ['null' => true, 'signed' => false])
+            ->addColumn('statement_id', 'integer', ['null' => true, 'signed' => false])
             ->addColumn('contact_id', 'integer', ['null' => true])
             ->addColumn('subscription_id', 'integer', ['null' => true])
             ->addColumn('updated_at', 'timestamp', [

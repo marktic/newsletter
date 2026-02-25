@@ -24,6 +24,7 @@ trait NewsletterNewsletterTrait
     protected ?string $name = null;
     protected ?string $subject = null;
     protected ?string $content = null;
+    protected ?string $grapesjs_data = null;
     protected ?string $status = null;
 
     public const STATUS_DRAFT = 'draft';
@@ -99,6 +100,16 @@ trait NewsletterNewsletterTrait
     public function setContent(?string $content): void
     {
         $this->content = $content;
+    }
+
+    public function getGrapesjsData(): ?string
+    {
+        return $this->grapesjs_data;
+    }
+
+    public function setGrapesjsData(?string $grapesjs_data): void
+    {
+        $this->grapesjs_data = $grapesjs_data;
     }
 
     public function getStatus(): ?string

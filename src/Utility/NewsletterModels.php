@@ -8,7 +8,10 @@ use Marktic\Newsletter\Consents\Models\NewsletterConsents;
 use Marktic\Newsletter\ConsentStatements\Models\NewsletterConsentStatements;
 use Marktic\Newsletter\Contacts\Models\NewsletterContacts;
 use Marktic\Newsletter\Lists\Models\NewsletterLists;
+use Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilters;
+use Marktic\Newsletter\NewsletterItems\Models\NewsletterItems;
 use Marktic\Newsletter\NewsletterServiceProvider;
+use Marktic\Newsletter\Newsletters\Models\NewsletterNewsletters;
 use Marktic\Newsletter\Subscriptions\Models\NewsletterSubscriptions;
 use Nip\Records\RecordManager;
 
@@ -24,6 +27,9 @@ class NewsletterModels extends ModelFinder
     public const CONSENTS = 'consents';
     public const CONSENT_STATEMENTS = 'consent_statements';
     public const CONSENT_ARTIFACTS = 'consent_artifacts';
+    public const NEWSLETTERS = 'newsletters';
+    public const NEWSLETTER_FILTERS = 'newsletter_filters';
+    public const NEWSLETTER_ITEMS = 'newsletter_items';
 
     /**
      * @return NewsletterLists|RecordManager
@@ -71,6 +77,30 @@ class NewsletterModels extends ModelFinder
     public static function consentArtifacts()
     {
         return static::getModels(self::CONSENT_ARTIFACTS, NewsletterConsentArtifacts::class);
+    }
+
+    /**
+     * @return NewsletterNewsletters|RecordManager
+     */
+    public static function newsletters()
+    {
+        return static::getModels(self::NEWSLETTERS, NewsletterNewsletters::class);
+    }
+
+    /**
+     * @return NewsletterFilters|RecordManager
+     */
+    public static function newsletterFilters()
+    {
+        return static::getModels(self::NEWSLETTER_FILTERS, NewsletterFilters::class);
+    }
+
+    /**
+     * @return NewsletterItems|RecordManager
+     */
+    public static function newsletterItems()
+    {
+        return static::getModels(self::NEWSLETTER_ITEMS, NewsletterItems::class);
     }
 
     protected static function packageName(): string

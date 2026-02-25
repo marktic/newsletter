@@ -9,5 +9,6 @@ use Marktic\Newsletter\Utility\NewsletterModels;
     <td><?= translator()->trans('type') ?></td>
     <td><?= translator()->trans('status') ?></td>
     <td><?= translator()->trans('created_at') ?></td>
+    <td><?= translator()->trans('actions') ?></td>
 </tr>
 </thead>

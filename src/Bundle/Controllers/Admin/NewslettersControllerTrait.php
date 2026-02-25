@@ -28,4 +28,35 @@ trait NewslettersControllerTrait
 
         $this->getRequest()->setAttribute(NewsletterOwner::CONTROLLER_ATTRIBUTE, $this->getNewsletterOwner());
     }
+
+    public function edit()
+    {
+        $item = $this->getModelFromRequest();
+        if (!$item) {
+            $this->payload()->notFound();
+            return;
+        }
+
+        if ($this->getRequest()->isMethod('POST')) {
+            $grapesjsData = $this->getRequest()->getPost('grapesjs_data');
+            $content = $this->getRequest()->getPost('content');
+
+            if ($grapesjsData !== null) {
+                $item->setGrapesjsData($grapesjsData);
+            }
+            if ($content !== null) {
+                $item->setContent($content);
+            }
+            $item->save();
+
+            if ($this->getRequest()->isAjax()) {
+                $this->payload()->json(['status' => 'ok']);
+                return;
+            }
+        }
+
+        $this->payload()->set('item', $item);
+        $this->payload()->setView('edit');
+    }
 }
+

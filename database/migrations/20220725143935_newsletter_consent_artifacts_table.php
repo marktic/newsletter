@@ -28,8 +28,8 @@ final class NewsletterConsentArtifactsTable extends AbstractMigration
         $table
             ->addColumn('consent_id', 'integer', ['null' => true, 'signed' => false])
             ->addColumn('statement_id', 'integer', ['null' => true, 'signed' => false])
-            ->addColumn('contact_id', 'integer', ['null' => true])
-            ->addColumn('subscription_id', 'integer', ['null' => true])
+            ->addColumn('contact_id', 'integer', ['null' => true, 'signed' => false])
+            ->addColumn('subscription_id', 'integer', ['null' => true,'signed' => false])
             ->addColumn('updated_at', 'timestamp', [
                 'default' => 'CURRENT_TIMESTAMP',
                 'update' => 'CURRENT_TIMESTAMP',

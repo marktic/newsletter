@@ -26,7 +26,7 @@ final class NewsletterConsentStatementsTable extends AbstractMigration
         }
         $table = $this->table($table_name);
         $table
-            ->addColumn('consent_id', 'integer', ['null' => true])
+            ->addColumn('consent_id', 'integer', ['null' => true, 'signed' => false])
             ->addColumn('hash', 'string', ['null' => true])
             ->addColumn('text', 'text', ['null' => true])
             ->addColumn('updated_at', 'timestamp', [

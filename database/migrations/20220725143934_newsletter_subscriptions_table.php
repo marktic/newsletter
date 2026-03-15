@@ -28,7 +28,7 @@ final class NewsletterSubscriptionsTable extends AbstractMigration
         $table
             ->addColumn('contact_id', 'integer', ['null' => true, 'signed' => false])
             ->addColumn('list_id', 'integer', ['null' => true, 'signed' => false])
-            ->addColumn('consent_id', 'integer', ['null' => true])
+            ->addColumn('consent_id', 'integer', ['null' => true, 'signed' => false])
             ->addColumn('channels', 'string', ['limit' => 255, 'null' => false])
             ->addColumn('updated_at', 'timestamp', [
                 'default' => 'CURRENT_TIMESTAMP',

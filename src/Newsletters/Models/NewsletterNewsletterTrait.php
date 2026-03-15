@@ -24,6 +24,7 @@ trait NewsletterNewsletterTrait
     protected ?string $name = null;
     protected ?string $subject = null;
     protected ?string $content = null;
+    protected ?string $grapesjs_data = null;
     protected ?string $status = null;
 
     public const STATUS_DRAFT = 'draft';
@@ -99,6 +100,31 @@ trait NewsletterNewsletterTrait
     public function setContent(?string $content): void
     {
         $this->content = $content;
+    }
+
+    public function getGrapesjsData(): ?string
+    {
+        return $this->grapesjs_data;
+    }
+
+    public function setGrapesjsData(?string $grapesjs_data): void
+    {
+        $this->grapesjs_data = $grapesjs_data;
+    }
+
+    /**
+     * Generic accessor for the editor's saved project/design state.
+     * Maps to the `grapesjs_data` database column regardless of which
+     * editor driver is currently configured.
+     */
+    public function getEditorData(): ?string
+    {
+        return $this->grapesjs_data;
+    }
+
+    public function setEditorData(?string $data): void
+    {
+        $this->grapesjs_data = $data;
     }
 
     public function getStatus(): ?string

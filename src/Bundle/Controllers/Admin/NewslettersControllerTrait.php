@@ -7,6 +7,7 @@ namespace Marktic\Newsletter\Bundle\Controllers\Admin;
 use Marktic\Newsletter\Bundle\Controllers\Base\Behaviours\HasNewsletterOwnerTrait;
 use Marktic\Newsletter\NewsletterOwners\Dto\NewsletterOwner;
 use Marktic\Newsletter\Utility\NewsletterModels;
+use Marktic\Newsletter\Utility\PackageConfig;
 use Nip\Controllers\Response\ResponsePayload;
 
 /**
@@ -28,4 +29,40 @@ trait NewslettersControllerTrait
 
         $this->getRequest()->setAttribute(NewsletterOwner::CONTROLLER_ATTRIBUTE, $this->getNewsletterOwner());
     }
+
+    public function edit()
+    {
+        $item = $this->getModelFromRequest();
+        if (!$item) {
+            $this->payload()->notFound();
+            return;
+        }
+
+        if ($this->getRequest()->isMethod('POST')) {
+            /* Accept either the generic field name ('editor_data') or the
+               legacy GrapesJS-specific field name for backward compatibility. */
+            $editorData = $this->getRequest()->getPost('editor_data')
+                ?? $this->getRequest()->getPost('grapesjs_data');
+            $content = $this->getRequest()->getPost('content');
+
+            if ($editorData !== null) {
+                $item->setEditorData($editorData);
+            }
+            if ($content !== null) {
+                $item->setContent($content);
+            }
+            $item->save();
+
+            if ($this->getRequest()->isAjax()) {
+                $this->payload()->json(['status' => 'ok']);
+                return;
+            }
+        }
+
+        $this->payload()->set('item', $item);
+        $this->payload()->set('editorDriver', PackageConfig::editorDriver());
+        $this->payload()->set('editorOptions', PackageConfig::editorOptions());
+        $this->payload()->setView('edit');
+    }
 }
+

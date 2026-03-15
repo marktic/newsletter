@@ -35,4 +35,32 @@ return [
         'connection' => 'main',
         'migrations' => true,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Newsletter Editor
+    |--------------------------------------------------------------------------
+    |
+    | driver  - Which visual editor to use. Built-in drivers:
+    |             'grapesjs'  (default) – GrapesJS + newsletter preset
+    |             'unlayer'            – Unlayer (embed.js)
+    |             'beefree'            – Beefree SDK
+    |
+    | options - Associative array passed to the editor view as $editorOptions.
+    |           Driver-specific keys:
+    |
+    |  grapesjs: (none required – works out of the box)
+    |
+    |  unlayer:
+    |    'project_id' => 12345,          // (optional) Unlayer project/template ID
+    |
+    |  beefree:
+    |    'client_id'     => 'YOUR_ID',   // (required) Beefree app client ID
+    |    'client_secret' => 'SECRET',    // (required) Beefree app client secret
+    |
+    */
+    'editor' => [
+        'driver'  => 'grapesjs',
+        'options' => [],
+    ],
 ];

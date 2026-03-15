@@ -49,4 +49,27 @@ class PackageConfig extends \ByTIC\PackageBase\Utility\PackageConfig
     {
         return static::instance()->get('database.migrations', false) !== false;
     }
+
+    public static function editorDriver(): string
+    {
+        return (string)static::instance()->get('editor.driver', 'grapesjs');
+    }
+
+    public static function editorOptions(): array
+    {
+        return (array)static::instance()->get('editor.options', []);
+    }
+
+    /**
+     * Reset the singleton instance.
+     *
+     * Intended for use in tests only, to ensure each test reads a fresh
+     * copy of the configuration from the container.
+     *
+     * @internal
+     */
+    public static function resetInstance(): void
+    {
+        static::$instance = null;
+    }
 }

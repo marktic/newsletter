@@ -112,6 +112,21 @@ trait NewsletterNewsletterTrait
         $this->grapesjs_data = $grapesjs_data;
     }
 
+    /**
+     * Generic accessor for the editor's saved project/design state.
+     * Maps to the `grapesjs_data` database column regardless of which
+     * editor driver is currently configured.
+     */
+    public function getEditorData(): ?string
+    {
+        return $this->grapesjs_data;
+    }
+
+    public function setEditorData(?string $data): void
+    {
+        $this->grapesjs_data = $data;
+    }
+
     public function getStatus(): ?string
     {
         return $this->status;

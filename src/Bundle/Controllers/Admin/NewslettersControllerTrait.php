@@ -7,6 +7,7 @@ namespace Marktic\Newsletter\Bundle\Controllers\Admin;
 use Marktic\Newsletter\Bundle\Controllers\Base\Behaviours\HasNewsletterOwnerTrait;
 use Marktic\Newsletter\NewsletterOwners\Dto\NewsletterOwner;
 use Marktic\Newsletter\Utility\NewsletterModels;
+use Marktic\Newsletter\Utility\PackageConfig;
 use Nip\Controllers\Response\ResponsePayload;
 
 /**
@@ -38,11 +39,14 @@ trait NewslettersControllerTrait
         }
 
         if ($this->getRequest()->isMethod('POST')) {
-            $grapesjsData = $this->getRequest()->getPost('grapesjs_data');
+            /* Accept either the generic field name ('editor_data') or the
+               legacy GrapesJS-specific field name for backward compatibility. */
+            $editorData = $this->getRequest()->getPost('editor_data')
+                ?? $this->getRequest()->getPost('grapesjs_data');
             $content = $this->getRequest()->getPost('content');
 
-            if ($grapesjsData !== null) {
-                $item->setGrapesjsData($grapesjsData);
+            if ($editorData !== null) {
+                $item->setEditorData($editorData);
             }
             if ($content !== null) {
                 $item->setContent($content);
@@ -56,6 +60,8 @@ trait NewslettersControllerTrait
         }
 
         $this->payload()->set('item', $item);
+        $this->payload()->set('editorDriver', PackageConfig::editorDriver());
+        $this->payload()->set('editorOptions', PackageConfig::editorOptions());
         $this->payload()->setView('edit');
     }
 }

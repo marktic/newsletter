@@ -85,107 +85,40 @@ $grapesjsData = $item->getGrapesjsData() ?: '{}';
         height: '100%',
         storageManager: false,
 
-        /* Email preset: adds table-based blocks, inline CSS, 600px canvas */
+        /* Email preset: adds table-based blocks, inline CSS, Desktop/Mobile
+           devices (600px / 320px), and juice-based CSS inliner command */
         plugins: ['gjs-preset-newsletter'],
         pluginsOpts: {
             'gjs-preset-newsletter': {
-                /* Inline all CSS so email clients don't strip <style> blocks */
+                /* Inline all CSS so email clients render styles correctly */
                 inlineCss: true,
-                /* Starter import placeholder shown in the "Import" modal */
-                importPlaceholder:
-                    '<table class="main"><tr><td></td></tr></table>',
-                /* Labels */
-                modalLabelImport: 'Paste your HTML template below and click Import',
-                modalLabelExport: 'Copy the code and use it in your mailer',
+                /* Placeholder shown in the Import HTML modal */
+                importPlaceholder: [
+                    '<table width="100%" style="background:#e8ecf0;padding:20px 0">',
+                    '  <tr><td align="center">',
+                    '    <table width="600" style="background:#ffffff;border-radius:4px">',
+                    '      <tr><td style="padding:20px">Your content here</td></tr>',
+                    '    </table>',
+                    '  </td></tr>',
+                    '</table>',
+                ].join('\n'),
+                modalLabelImport: 'Paste your HTML template and click Import',
+                modalLabelExport: 'Copy the HTML below to use in your mailer',
             }
         },
 
-        /* Canvas: simulate a typical email client background */
+        /* Canvas: load web-safe fonts for use inside the email preview */
         canvas: {
             styles: [
-                /* Google Fonts for use inside the canvas */
-                'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap'
+                'https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap',
             ]
         },
 
-        /* Style manager: only properties that render reliably in email clients */
-        styleManager: {
-            sectors: [
-                {
-                    name: 'General',
-                    open: false,
-                    properties: [
-                        { name: 'Width', property: 'width', type: 'integer', units: ['px', '%'] },
-                        { name: 'Height', property: 'height', type: 'integer', units: ['px'] },
-                    ]
-                },
-                {
-                    name: 'Typography',
-                    open: true,
-                    properties: [
-                        { name: 'Font', property: 'font-family', type: 'select',
-                          options: [
-                            {value: 'Arial, Helvetica, sans-serif', name: 'Arial'},
-                            {value: "'Open Sans', Arial, sans-serif", name: 'Open Sans'},
-                            {value: 'Georgia, serif', name: 'Georgia'},
-                            {value: "'Trebuchet MS', sans-serif", name: 'Trebuchet'},
-                            {value: 'Verdana, Geneva, sans-serif', name: 'Verdana'},
-                          ]
-                        },
-                        { name: 'Size',   property: 'font-size',   type: 'integer', units: ['px'] },
-                        { name: 'Weight', property: 'font-weight', type: 'select',
-                          options: [
-                            {value: '400', name: 'Normal'},
-                            {value: '600', name: 'Semi-bold'},
-                            {value: '700', name: 'Bold'},
-                          ]
-                        },
-                        { name: 'Line height',  property: 'line-height',   type: 'integer', units: ['px'] },
-                        { name: 'Color',        property: 'color',         type: 'color' },
-                        { name: 'Text align',   property: 'text-align',    type: 'radio',
-                          options: [
-                            {value: 'left',   name: '«'},
-                            {value: 'center', name: '='},
-                            {value: 'right',  name: '»'},
-                          ]
-                        },
-                    ]
-                },
-                {
-                    name: 'Spacing',
-                    open: false,
-                    properties: [
-                        { name: 'Padding',    property: 'padding',    type: 'integer', units: ['px'] },
-                        { name: 'Margin',     property: 'margin',     type: 'integer', units: ['px'] },
-                    ]
-                },
-                {
-                    name: 'Background',
-                    open: false,
-                    properties: [
-                        { name: 'Background color', property: 'background-color', type: 'color' },
-                    ]
-                },
-                {
-                    name: 'Border',
-                    open: false,
-                    properties: [
-                        { name: 'Border',       property: 'border',        type: 'integer', units: ['px'] },
-                        { name: 'Border color', property: 'border-color',  type: 'color' },
-                        { name: 'Border style', property: 'border-style',  type: 'select',
-                          options: [
-                            {value: 'none',   name: 'None'},
-                            {value: 'solid',  name: 'Solid'},
-                            {value: 'dashed', name: 'Dashed'},
-                          ]
-                        },
-                    ]
-                },
-            ]
-        },
-
-        /* Panels: hide panels we don't need for email editing */
-        panels: { defaults: [] },
+        /* NOTE: do NOT set panels:{defaults:[]} here.
+           The preset-newsletter plugin adds its own panel buttons (Blocks,
+           Layers, Style, Settings, Import, Export) to the standard panel
+           containers. Wiping defaults removes those containers and leaves
+           the editor without any UI controls. */
     });
 
     /* ── Load existing content ───────────────────────────────────────── */
@@ -199,8 +132,64 @@ $grapesjsData = $item->getGrapesjsData() ?: '{}';
         }
     } else {
         var existingHtml = <?= json_encode($item->getContent() ?: '') ?>;
-        if (existingHtml) { editor.setComponents(existingHtml); }
+        if (existingHtml) {
+            editor.setComponents(existingHtml);
+        } else {
+            /* Default starter template for a brand-new newsletter */
+            editor.setComponents([
+                '<table width="100%" style="background-color:#e8ecf0;padding:20px 0;margin:0;">',
+                '  <tr><td align="center">',
+                '    <table width="600" style="background-color:#ffffff;border-radius:4px;overflow:hidden;">',
+                '      <!-- Header -->',
+                '      <tr>',
+                '        <td align="center" style="background-color:#1a2433;padding:24px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:bold;">',
+                '          Your Newsletter Title',
+                '        </td>',
+                '      </tr>',
+                '      <!-- Body text -->',
+                '      <tr>',
+                '        <td style="padding:32px 40px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#333333;">',
+                '          <p style="margin:0 0 16px 0;">Hello,</p>',
+                '          <p style="margin:0 0 16px 0;">Write your newsletter content here. Use the blocks panel on the right to add images, buttons, columns, and more.</p>',
+                '        </td>',
+                '      </tr>',
+                '      <!-- CTA Button -->',
+                '      <tr>',
+                '        <td align="center" style="padding:0 40px 32px 40px;">',
+                '          <a href="#" style="display:inline-block;background-color:#2980b9;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;text-decoration:none;padding:12px 28px;border-radius:3px;">Read More</a>',
+                '        </td>',
+                '      </tr>',
+                '      <!-- Footer -->',
+                '      <tr>',
+                '        <td align="center" style="background-color:#f5f7fa;padding:20px 40px;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#888888;line-height:20px;border-top:1px solid #e0e0e0;">',
+                '          <p style="margin:0 0 6px 0;">You are receiving this email because you subscribed to our newsletter.</p>',
+                '          <p style="margin:0;"><a href="#unsubscribe" style="color:#888888;">Unsubscribe</a></p>',
+                '        </td>',
+                '      </tr>',
+                '    </table>',
+                '  </td></tr>',
+                '</table>',
+            ].join('\n'));
+        }
     }
+
+    /* ── Track unsaved changes ───────────────────────────────────────── */
+    var isDirty = false;
+    editor.on('change:changesCount', function () { isDirty = true; });
+    window.addEventListener('beforeunload', function (e) {
+        if (isDirty) {
+            e.preventDefault();
+            e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+    });
+
+    /* ── Ctrl+S / Cmd+S keyboard shortcut ───────────────────────────── */
+    document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            document.getElementById('save-btn').click();
+        }
+    });
 
     /* ── Device switching ────────────────────────────────────────────── */
     document.getElementById('btn-desktop').addEventListener('click', function () {
@@ -265,6 +254,7 @@ $grapesjsData = $item->getGrapesjsData() ?: '{}';
         }).then(function (response) {
             saveBtn.disabled = false;
             if (response.ok) {
+                isDirty = false;
                 statusEl.style.color = '#2ecc71';
                 statusEl.textContent = '✓ Saved';
                 setTimeout(function () { statusEl.textContent = ''; }, 3000);

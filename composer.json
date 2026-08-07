@@ -32,7 +32,8 @@
     "bytic/orm": "^0.9|^1.0|^2.0",
     "bytic/orm-filters": "^0.9|^1.0|^2.0",
     "bytic/orm-behaviors": "^0.9|^1.0|^2.0",
-    "bytic/translation": "^0.9|^1.0|^2.0"
+    "bytic/translation": "^0.9|^1.0|^2.0",
+    "pipetic/bundle": "^1.0"
   },
   "require-dev": {
     "bytic/view": "^1.0|^2.0",

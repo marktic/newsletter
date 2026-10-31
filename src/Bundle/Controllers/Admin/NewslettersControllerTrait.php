@@ -72,6 +72,5 @@ trait NewslettersControllerTrait
         $this->payload()->set('item', $item);
         $this->payload()->set('editorDriver', PackageConfig::editorDriver());
         $this->payload()->set('editorOptions', PackageConfig::editorOptions());
-        $this->payload()->setView('edit');
     }
 }

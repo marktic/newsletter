@@ -16,7 +16,6 @@ class NewslettersControllerPreviewTest extends AbstractTest
         $controller->view();
 
         self::assertSame($controller->item, $controller->response->data['item']);
-        self::assertSame('view', $controller->response->view);
         self::assertFalse($controller->response->missing);
     }
 
@@ -28,7 +27,6 @@ class NewslettersControllerPreviewTest extends AbstractTest
 
         self::assertTrue($controller->response->missing);
         self::assertSame([], $controller->response->data);
-        self::assertNull($controller->response->view);
     }
 
     private function createController(): NewsletterPreviewCrudController
@@ -43,17 +41,11 @@ class NewslettersControllerPreviewTest extends AbstractTest
             {
                 $this->response = new class {
                     public array $data = [];
-                    public ?string $view = null;
                     public bool $missing = false;
 
                     public function set($key, $value): void
                     {
                         $this->data[$key] = $value;
-                    }
-
-                    public function setView(string $view): void
-                    {
-                        $this->view = $view;
                     }
 
                     public function notFound(): void

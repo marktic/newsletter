@@ -37,9 +37,7 @@ trait NewslettersControllerTrait
             $this->payload()->notFound();
             return;
         }
-
         $this->payload()->set('item', $item);
-        $this->payload()->setView('view');
     }
 
     public function edit()

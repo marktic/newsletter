@@ -13,6 +13,8 @@ use Marktic\Newsletter\Utility\NewsletterModels;
     <td><?= $item->getStatus(); ?></td>
     <td><?= $item->getCreatedAt(); ?></td>
     <td>
+        <a href="<?= NewsletterModels::newsletters()->compileURL('view', ['id' => $item->getId()]) ?>"
+           class="btn btn-sm btn-secondary"><?= translator()->trans('view') ?></a>
         <a href="<?= NewsletterModels::newsletters()->compileURL('edit', ['id' => $item->getId()]) ?>"
            class="btn btn-sm btn-primary"><?= translator()->trans('edit') ?></a>
     </td>

@@ -30,6 +30,18 @@ trait NewslettersControllerTrait
         $this->getRequest()->setAttribute(NewsletterOwner::CONTROLLER_ATTRIBUTE, $this->getNewsletterOwner());
     }
 
+    public function view()
+    {
+        $item = $this->getModelFromRequest();
+        if (!$item) {
+            $this->payload()->notFound();
+            return;
+        }
+
+        $this->payload()->set('item', $item);
+        $this->payload()->setView('view');
+    }
+
     public function edit()
     {
         $item = $this->getModelFromRequest();
@@ -64,4 +76,3 @@ trait NewslettersControllerTrait
         $this->payload()->set('editorOptions', PackageConfig::editorOptions());
     }
 }
-

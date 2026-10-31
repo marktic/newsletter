@@ -121,6 +121,51 @@ $editorData = $item->getEditorData() ?: '{}';
            the editor without any UI controls. */
     });
 
+    /* ── Basic email-safe building blocks ───────────────────────────── */
+    [
+        {
+            id: 'email-row',
+            label: 'Row',
+            content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td style="padding:10px 0;"></td></tr></tbody></table>',
+        },
+        {
+            id: 'email-two-columns',
+            label: '2 Columns',
+            content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="50%" valign="top" style="padding:10px;"></td><td width="50%" valign="top" style="padding:10px;"></td></tr></tbody></table>',
+        },
+        {
+            id: 'email-heading',
+            label: 'Heading',
+            content: '<h2 style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:24px;line-height:30px;color:#1a2433;">Heading</h2>',
+        },
+        {
+            id: 'email-text',
+            label: 'Text',
+            content: '<p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#333333;">Write your text here.</p>',
+        },
+        {
+            id: 'email-button',
+            label: 'Button',
+            content: '<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center"><tbody><tr><td align="center" bgcolor="#2980b9" style="border-radius:3px;"><a href="#" style="display:inline-block;padding:12px 28px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#ffffff;text-decoration:none;">Button text</a></td></tr></tbody></table>',
+        },
+        {
+            id: 'email-divider',
+            label: 'Divider',
+            content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td style="padding:12px 0;border-bottom:1px solid #e0e0e0;font-size:1px;line-height:1px;">&nbsp;</td></tr></tbody></table>',
+        },
+        {
+            id: 'email-spacer',
+            label: 'Spacer',
+            content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="24" style="height:24px;font-size:1px;line-height:24px;">&nbsp;</td></tr></tbody></table>',
+        },
+    ].forEach(function (block) {
+        editor.BlockManager.add(block.id, {
+            label: block.label,
+            category: 'Basic',
+            content: block.content,
+        });
+    });
+
     /* ── Load existing content ───────────────────────────────────────── */
     var editorData = <?= json_encode($editorData) ?>;
     if (editorData && editorData !== '{}') {

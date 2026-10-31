@@ -16,4 +16,8 @@ trait TimestampableTrait
      */
     protected static $updateTimestamps = ['updated_at'];
 
+    public function getCreatedAt()
+    {
+        return $this->getAttribute(static::$createTimestamps[0]);
+    }
 }

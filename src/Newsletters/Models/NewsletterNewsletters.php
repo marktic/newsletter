@@ -18,4 +18,5 @@ class NewsletterNewsletters extends RecordManager
     public const CONTROLLER = 'mkt_newsletter-newsletters';
 
     public const RELATION_LIST = 'NewsletterList';
+    public const RELATION_FILTERS = 'NewsletterFilters';
 }

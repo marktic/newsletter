@@ -63,4 +63,34 @@ return [
         'driver'  => 'grapesjs',
         'options' => [],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Newsletter Filters
+    |--------------------------------------------------------------------------
+    |
+    | types - Extra filter type classes implementing
+    |         Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypeInterface.
+    |         Built-in: list, channel, subscribed_after, subscribed_before.
+    |
+    */
+    'filters' => [
+        'types' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Preview Emails
+    |--------------------------------------------------------------------------
+    |
+    | sender - Class name or container service id implementing
+    |          Marktic\Newsletter\Newsletters\Actions\Preview\PreviewEmailSenderInterface.
+    |          Defaults to NativeMailPreviewSender (PHP mail()).
+    | from   - Optional "From" address used by the default sender.
+    |
+    */
+    'preview' => [
+        'sender' => null,
+        'from' => null,
+    ],
 ];

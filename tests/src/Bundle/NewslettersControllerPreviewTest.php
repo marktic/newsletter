@@ -16,8 +16,45 @@ class NewslettersControllerPreviewTest extends AbstractTest
         $controller->view();
 
         self::assertSame($controller->item, $controller->response->data['item']);
-        self::assertSame('view', $controller->response->view);
+        self::assertSame(['filter'], $controller->response->data['filters']);
+        self::assertArrayHasKey('list', $controller->response->data['filterTypes']);
+        self::assertSame('/preview', $controller->response->data['urls']['preview']);
         self::assertFalse($controller->response->missing);
+    }
+
+    public function test_preview_renders_standalone_page_without_layout(): void
+    {
+        $controller = $this->createController();
+        $controller->item = new class {
+            public function getName(): string
+            {
+                return 'Weekly';
+            }
+
+            public function getSubject(): ?string
+            {
+                return null;
+            }
+
+            public function getContent(): string
+            {
+                return '<p>Hi</p>';
+            }
+        };
+
+        $controller->preview();
+        $factory = new class {
+            public function make($content = '', $status = 200, array $headers = []): array
+            {
+                return [$content, $status, $headers];
+            }
+        };
+        [$content, $status, $headers] = $controller->previewViewResponse($factory, $controller->response->data);
+
+        self::assertSame(200, $status);
+        self::assertSame('text/html; charset=UTF-8', $headers['Content-Type']);
+        self::assertStringStartsWith('<!DOCTYPE html>', $content);
+        self::assertStringContainsString('srcdoc="&lt;p&gt;Hi&lt;/p&gt;"', $content);
     }
 
     public function test_view_returns_not_found_for_a_missing_newsletter(): void
@@ -71,6 +108,16 @@ class NewslettersControllerPreviewTest extends AbstractTest
             public function payload()
             {
                 return $this->response;
+            }
+
+            protected function findNewsletterFilters($item): array
+            {
+                return ['filter'];
+            }
+
+            protected function newsletterViewUrls($item): array
+            {
+                return ['view' => '/view', 'preview' => '/preview'];
             }
 
             protected function generateBillingOwnerDefault()

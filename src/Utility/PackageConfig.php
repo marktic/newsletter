@@ -61,6 +61,29 @@ class PackageConfig extends \ByTIC\PackageBase\Utility\PackageConfig
     }
 
     /**
+     * Extra newsletter filter type classes (implementing FilterTypeInterface).
+     */
+    public static function filterTypes(): array
+    {
+        return (array)static::instance()->get('filters.types', []);
+    }
+
+    /**
+     * Class name (or container id) of the PreviewEmailSenderInterface implementation.
+     */
+    public static function previewEmailSender(): ?string
+    {
+        $sender = static::instance()->get('preview.sender');
+        return $sender ? (string)$sender : null;
+    }
+
+    public static function previewEmailFrom(): ?string
+    {
+        $from = static::instance()->get('preview.from');
+        return $from ? (string)$from : null;
+    }
+
+    /**
      * Reset the singleton instance.
      *
      * Intended for use in tests only, to ensure each test reads a fresh

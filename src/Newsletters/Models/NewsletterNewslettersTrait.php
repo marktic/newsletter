@@ -18,6 +18,15 @@ trait NewsletterNewslettersTrait
     {
         $this->initRelationsNewsletterOwner();
         $this->initRelationsNewsletterList();
+        $this->initRelationsNewsletterFilters();
+    }
+
+    protected function initRelationsNewsletterFilters(): void
+    {
+        $this->hasMany(
+            NewsletterNewsletters::RELATION_FILTERS,
+            ['class' => get_class(NewsletterModels::newsletterFilters()), 'fk' => 'id_newsletter']
+        );
     }
 
     protected function initRelationsNewsletterList(): void

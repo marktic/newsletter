@@ -38,7 +38,18 @@ class NewsletterEditorTest extends AbstractTest
         self::assertStringContainsString('<!DOCTYPE html PUBLIC', $html);
     }
 
-    private function renderEditor(string $editorDriver): string
+    public function test_editor_uses_only_definition_placeholders_and_escapes_tokens_and_labels(): void
+    {
+        foreach (['grapesjs', 'unlayer', 'beefree'] as $driver) {
+            $html = $this->renderEditor($driver, ['{{ organization "name" }}' => 'Name <label>']);
+            self::assertStringContainsString('data-placeholder="{{ organization &quot;name&quot; }}"', $html);
+            self::assertStringContainsString('Name &lt;label&gt;', $html);
+            self::assertStringNotContainsString('data-placeholder="{{ first_name }}"', $html);
+            self::assertStringNotContainsString('class="html-placeholder"', $this->renderEditor($driver, []));
+        }
+    }
+
+    private function renderEditor(string $editorDriver, ?array $placeholders = null): string
     {
         $item = new NewsletterNewsletter();
         $item->setId(7);

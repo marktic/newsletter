@@ -1,6 +1,7 @@
 <?php
 
 use Marktic\Newsletter\Newsletters\Models\NewsletterNewsletter;
+use Marktic\Newsletter\NewsletterDefinitions\DefinitionResolver;
 
 /**
  * Editor dispatcher.
@@ -15,6 +16,7 @@ use Marktic\Newsletter\Newsletters\Models\NewsletterNewsletter;
  */
 $editorDriver  = $editorDriver  ?? 'grapesjs';
 $editorOptions = $editorOptions ?? [];
+$placeholders = $placeholders ?? DefinitionResolver::forNewsletter($item)->getPlaceholders();
 
 /* Sanitise the driver name so it can only contain safe characters before
    using it to build a file path. */
@@ -103,9 +105,10 @@ require $partialPath;
         <form method="post">
             <div class="d-flex align-items-center gap-2" aria-label="Insert personalization placeholder">
                 <span>Insert:</span>
-                <button type="button" class="html-placeholder" data-placeholder="{{ first_name }}">First name</button>
-                <button type="button" class="html-placeholder" data-placeholder="{{ last_name }}">Last name</button>
-                <button type="button" class="html-placeholder" data-placeholder="{{ email }}">Email</button>
+                <?php foreach ($placeholders as $token => $label): ?>
+                    <button type="button" class="html-placeholder"
+                            data-placeholder="<?= htmlspecialchars($token, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></button>
+                <?php endforeach; ?>
             </div>
             <textarea name="content" aria-label="Newsletter HTML source" spellcheck="false"><?= htmlspecialchars($item->getContent() ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
             <footer>

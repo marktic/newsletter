@@ -3,6 +3,8 @@
 namespace Marktic\Newsletter\Utility;
 
 use Exception;
+use Marktic\Newsletter\Base\Exceptions\NewsletterException;
+use Marktic\Newsletter\NewsletterDefinitions\BaseDefinition;
 use Marktic\Newsletter\NewsletterServiceProvider;
 use Nip\Config\Config;
 use Nip\Utility\Traits\SingletonTrait;
@@ -59,6 +61,24 @@ class PackageConfig extends \ByTIC\PackageBase\Utility\PackageConfig
     public static function editorOptions(): array
     {
         return (array)static::instance()->get('editor.options', []);
+    }
+
+    public static function newsletterDefinitionClass(?string $owner, ?string $type): string
+    {
+        $class = static::instance()->get('definitions.default', BaseDefinition::class);
+        $available = static::configArray('definitions.available');
+        if ($owner !== null && $type !== null && array_key_exists($owner, $available)) {
+            if (!is_array($available[$owner])) {
+                throw new NewsletterException('Newsletter definitions must be keyed by owner and type.');
+            }
+            if (array_key_exists($type, $available[$owner])) {
+                $class = $available[$owner][$type];
+            }
+        }
+        if (!is_string($class) || $class === '') {
+            throw new NewsletterException('Newsletter definitions must be configured as class names.');
+        }
+        return $class;
     }
 
     /**

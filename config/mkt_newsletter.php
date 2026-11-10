@@ -4,6 +4,7 @@ use Marktic\Newsletter\Consents\Models\NewsletterConsents;
 use Marktic\Newsletter\ConsentStatements\Models\NewsletterConsentStatements;
 use Marktic\Newsletter\Contacts\Models\NewsletterContacts;
 use Marktic\Newsletter\Lists\Models\NewsletterLists;
+use Marktic\Newsletter\NewsletterDefinitions\BaseDefinition;
 use Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilters;
 use Marktic\Newsletter\NewsletterItems\Models\NewsletterItems;
 use Marktic\Newsletter\Newsletters\Models\NewsletterNewsletters;
@@ -65,6 +66,16 @@ return [
     ],
 
     /*
+    | Definition classes must extend BaseDefinition and accept a newsletter.
+    | An exact owner/type match overrides the default definition.
+    | Example: ['organizations' => ['weekly' => WeeklyDefinition::class]].
+    */
+    'definitions' => [
+        'default' => BaseDefinition::class,
+        'available' => [],
+    ],
+
+    /*
     |--------------------------------------------------------------------------
     | Newsletter Filters
     |--------------------------------------------------------------------------
@@ -72,9 +83,10 @@ return [
     | types - Extra filter type classes implementing
     |         Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypeInterface.
     |         Built-in: list, channel, subscribed_after, subscribed_before.
-    | default - Enabled filter names when no owner/type definition matches.
+    | default - Enabled filter names used by BaseDefinition.
     | available - Enabled filter names keyed by owner, then newsletter type.
     |             Example: ['organizations' => ['weekly' => ['list', 'channel']]].
+    |             Custom definitions can override getFilterTypes() instead.
     |
     */
     'filters' => [

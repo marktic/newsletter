@@ -20,4 +20,5 @@ return [
     'mkt_newsletter-newsletters.preview_email.emails_help' => 'Separate multiple addresses with commas (max 10).',
     'mkt_newsletter-newsletters.preview_email.send' => 'Send preview',
     'mkt_newsletter-newsletters.preview_email.messages.sent' => 'Preview email sent',
+    'mkt_newsletter-newsletters.send.messages.sent' => 'Newsletter sent',
 ];

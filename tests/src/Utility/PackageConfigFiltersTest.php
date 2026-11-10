@@ -10,6 +10,7 @@ use Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilter;
 use Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilters;
 use Marktic\Newsletter\Newsletters\Models\NewsletterNewsletter;
 use Marktic\Newsletter\Tests\AbstractTest;
+use Marktic\Newsletter\Tests\Fixtures\NewsletterDefinitions\TestDefinition;
 use Marktic\Newsletter\Utility\PackageConfig;
 use Mockery;
 use Nip\Config\Config;
@@ -121,6 +122,29 @@ class PackageConfigFiltersTest extends AbstractTest
 
         self::assertSame([3, 4], $result->getValues());
         self::assertSame(12, $result->getIdNewsletter());
+    }
+
+    public function test_direct_creation_uses_the_selected_definition_instead_of_legacy_filters(): void
+    {
+        Container::container()->set('config', new Config([
+            'mkt_newsletter' => [
+                'definitions' => ['available' => ['organizations' => ['weekly' => TestDefinition::class]]],
+                'filters' => ['default' => ['channel']],
+            ],
+        ], true));
+        PackageConfig::resetInstance();
+        $filter = Mockery::mock(NewsletterFilter::class)->makePartial();
+        $filter->shouldReceive('save')->once();
+        $repository = Mockery::mock(NewsletterFilters::class);
+        $repository->shouldReceive('getNew')->once()->andReturn($filter);
+        $newsletter = $this->newsletter('organizations', 'weekly');
+
+        $result = CreateNewsletterFilter::for($newsletter)
+            ->withType('list')->withValues('3')->withRepository($repository)->execute();
+
+        self::assertSame([3], $result->getValues());
+        $this->expectException(InvalidFilter::class);
+        CreateNewsletterFilter::for($newsletter)->withType('channel')->withValues('email')->execute();
     }
 
     private function configure(array $filters): void

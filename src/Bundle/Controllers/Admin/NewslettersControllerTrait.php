@@ -6,13 +6,13 @@ namespace Marktic\Newsletter\Bundle\Controllers\Admin;
 
 use Marktic\Newsletter\Base\Exceptions\NewsletterException;
 use Marktic\Newsletter\Bundle\Controllers\Base\Behaviours\HasNewsletterOwnerTrait;
+use Marktic\Newsletter\NewsletterDefinitions\BaseDefinition;
+use Marktic\Newsletter\NewsletterDefinitions\DefinitionResolver;
 use Marktic\Newsletter\NewsletterFilters\Actions\CreateNewsletterFilter;
 use Marktic\Newsletter\NewsletterFilters\Actions\DeleteNewsletterFilter;
 use Marktic\Newsletter\NewsletterFilters\Actions\FindFiltersForNewsletter;
-use Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypes;
 use Marktic\Newsletter\NewsletterOwners\Dto\NewsletterOwner;
 use Marktic\Newsletter\Newsletters\Actions\Preview\RenderNewsletterPreview;
-use Marktic\Newsletter\Newsletters\Actions\Preview\SendNewsletterPreviewEmail;
 use Marktic\Newsletter\Utility\NewsletterModels;
 use Marktic\Newsletter\Utility\PackageConfig;
 use Nip\Controllers\Response\ResponsePayload;
@@ -23,6 +23,8 @@ use Nip\Controllers\Response\ResponsePayload;
 trait NewslettersControllerTrait
 {
     use HasNewsletterOwnerTrait;
+
+    private ?BaseDefinition $resolvedNewsletterDefinition = null;
 
     protected function indexPrepareItems($items)
     {
@@ -45,6 +47,7 @@ trait NewslettersControllerTrait
             return;
         }
         $this->payload()->set('item', $item);
+        $this->payload()->set('newsletterDefinition', $this->newsletterDefinition($item));
         $this->payload()->set('filters', $this->findNewsletterFilters($item));
         $this->payload()->set('filterTypes', $this->newsletterFilterTypes($item));
         $this->payload()->set('urls', $this->newsletterViewUrls($item));
@@ -129,9 +132,33 @@ trait NewslettersControllerTrait
         $emails = $this->getRequest()->request->get('emails');
         $this->runNewsletterViewAction(
             $item,
-            fn() => SendNewsletterPreviewEmail::for($item)->to($emails)->execute(),
+            fn() => $this->newsletterDefinition($item)->sendPreview($emails),
             'preview_email.messages.sent'
         );
+    }
+
+    public function send()
+    {
+        $item = $this->getModelFromRequest();
+        if (!$item || !$this->getRequest()->isMethod('POST')) {
+            $this->payload()->notFound();
+            return;
+        }
+
+        $this->runNewsletterViewAction(
+            $item,
+            fn() => $this->newsletterDefinition($item)->send(),
+            'send.messages.sent'
+        );
+    }
+
+    protected function newsletterDefinition($item): BaseDefinition
+    {
+        if ($this->resolvedNewsletterDefinition === null
+            || $this->resolvedNewsletterDefinition->getNewsletter() !== $item) {
+            $this->resolvedNewsletterDefinition = DefinitionResolver::forNewsletter($item);
+        }
+        return $this->resolvedNewsletterDefinition;
     }
 
     protected function runNewsletterViewAction($item, callable $action, string $successMessage): void
@@ -155,13 +182,13 @@ trait NewslettersControllerTrait
     }
 
     /**
-     * Override to define the enabled filter types in the newsletter controller.
+     * Kept as a controller override hook; definitions provide the default.
      *
      * @return array<string, \Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypeInterface>
      */
     protected function newsletterFilterTypes($item): array
     {
-        return FilterTypes::forNewsletter($item);
+        return $this->newsletterDefinition($item)->getFilterTypes();
     }
 
     protected function newsletterViewUrls($item): array
@@ -170,6 +197,7 @@ trait NewslettersControllerTrait
         $params = ['id' => $item->getId()];
         return [
             'view' => $repository->compileURL('view', $params),
+            'edit' => $repository->compileURL('edit', $params),
             'preview' => $repository->compileURL('preview', $params),
             'addFilter' => $repository->compileURL('addFilter', $params),
             'deleteFilter' => $repository->compileURL('deleteFilter', $params),
@@ -211,6 +239,9 @@ trait NewslettersControllerTrait
         }
 
         $this->payload()->set('item', $item);
+        $definition = $this->newsletterDefinition($item);
+        $this->payload()->set('newsletterDefinition', $definition);
+        $this->payload()->set('placeholders', $definition->getPlaceholders());
         $this->payload()->set('editorDriver', PackageConfig::editorDriver());
         $this->payload()->set('editorOptions', PackageConfig::editorOptions());
     }

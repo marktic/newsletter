@@ -20,4 +20,5 @@ return [
     'mkt_newsletter-newsletters.preview_email.emails_help' => 'Separă adresele multiple prin virgulă (max 10).',
     'mkt_newsletter-newsletters.preview_email.send' => 'Trimite previzualizarea',
     'mkt_newsletter-newsletters.preview_email.messages.sent' => 'Emailul de previzualizare a fost trimis',
+    'mkt_newsletter-newsletters.send.messages.sent' => 'Newsletterul a fost trimis',
 ];

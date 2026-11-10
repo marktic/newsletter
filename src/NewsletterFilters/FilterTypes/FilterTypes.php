@@ -2,6 +2,7 @@
 
 namespace Marktic\Newsletter\NewsletterFilters\FilterTypes;
 
+use Marktic\Newsletter\NewsletterDefinitions\DefinitionResolver;
 use Marktic\Newsletter\NewsletterFilters\Exceptions\InvalidFilter;
 use Marktic\Newsletter\Utility\PackageConfig;
 
@@ -48,7 +49,7 @@ class FilterTypes
      */
     public static function forNewsletter($newsletter): array
     {
-        return static::only(PackageConfig::availableFilterTypes($newsletter->getOwner(), $newsletter->getType()));
+        return DefinitionResolver::forNewsletter($newsletter)->getFilterTypes();
     }
 
     /**

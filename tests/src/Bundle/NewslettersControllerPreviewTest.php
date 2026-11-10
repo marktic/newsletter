@@ -4,9 +4,11 @@ namespace Marktic\Newsletter\Tests\Bundle;
 
 use LogicException;
 use Marktic\Newsletter\Bundle\Controllers\Admin\NewslettersControllerTrait;
+use Marktic\Newsletter\NewsletterDefinitions\BaseDefinition;
 use Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypes;
 use Marktic\Newsletter\Newsletters\Models\NewsletterNewsletter;
 use Marktic\Newsletter\Tests\AbstractTest;
+use Marktic\Newsletter\Tests\Fixtures\NewsletterDefinitions\TestDefinition;
 use Marktic\Newsletter\Utility\PackageConfig;
 use Mockery;
 use Nip\Config\Config;
@@ -42,8 +44,10 @@ class NewslettersControllerPreviewTest extends AbstractTest
         $controller->view();
 
         self::assertSame($controller->item, $controller->response->data['item']);
+        self::assertInstanceOf(BaseDefinition::class, $controller->response->data['newsletterDefinition']);
         self::assertSame(['filter'], $controller->response->data['filters']);
         self::assertSame([], $controller->response->data['filterTypes']);
+        self::assertSame('/edit', $controller->response->data['urls']['edit']);
         self::assertSame('/preview', $controller->response->data['urls']['preview']);
         self::assertFalse($controller->response->missing);
     }
@@ -119,15 +123,67 @@ class NewslettersControllerPreviewTest extends AbstractTest
         self::assertSame('{"legacy":true}', $controller->item->getEditorData());
     }
 
-    private function editRequest(array $post): object
+    public function test_definition_controls_view_filters_editor_placeholders_and_sending(): void
     {
-        return new class($post) {
-            public function __construct(private array $post)
+        Container::container()->set('config', new Config([
+            'mkt_newsletter' => [
+                'definitions' => ['available' => ['organizations' => ['weekly' => TestDefinition::class]]],
+            ],
+        ], true));
+        PackageConfig::resetInstance();
+        $controller = $this->createController();
+        $controller->item = new NewsletterNewsletter();
+        $controller->item->setOwner('organizations');
+        $controller->item->setType('weekly');
+        $controller->view();
+
+        $definition = $controller->response->data['newsletterDefinition'];
+        self::assertInstanceOf(TestDefinition::class, $definition);
+        self::assertSame(['list'], array_keys($controller->response->data['filterTypes']));
+
+        $controller->request = $this->editRequest([], 'GET');
+        $controller->edit();
+        self::assertSame($definition, $controller->response->data['newsletterDefinition']);
+        self::assertSame(['{{ organization }}' => 'Organization'], $controller->response->data['placeholders']);
+
+        $controller->request = $this->editRequest(['emails' => 'TEST@example.com']);
+        $controller->sendPreview();
+        self::assertSame(['test@example.com'], $definition->previewRecipients);
+        self::assertSame('mkt_newsletter-newsletters.preview_email.messages.sent', $controller->redirect[0]);
+
+        $controller->send();
+        self::assertTrue($definition->sent);
+        self::assertSame('mkt_newsletter-newsletters.send.messages.sent', $controller->redirect[0]);
+
+        $controller->request = $this->editRequest([], 'GET');
+        $controller->send();
+        self::assertTrue($controller->response->missing);
+    }
+
+    public function test_default_definition_reports_unsupported_full_sending(): void
+    {
+        $controller = $this->createController();
+        $controller->item = new NewsletterNewsletter();
+        $controller->request = $this->editRequest([]);
+
+        $controller->send();
+
+        self::assertSame('error', $controller->redirect[2]);
+        self::assertStringContainsString('not configured', $controller->redirect[0]);
+    }
+
+    private function editRequest(array $post, string $method = 'POST'): object
+    {
+        return new class($post, $method) {
+            public $request;
+
+            public function __construct(private array $post, private string $method)
             {
+                $this->request = new \Symfony\Component\HttpFoundation\ParameterBag($post);
             }
             public function isMethod($method): bool
             {
-                return $method === 'POST';
+                return $method === $this->method;
             }
             public function getPost($key)
             {
@@ -260,7 +316,7 @@ class NewslettersControllerPreviewTest extends AbstractTest
 
             protected function newsletterViewUrls($item): array
             {
-                return ['view' => '/view', 'preview' => '/preview'];
+                return ['view' => '/view', 'edit' => '/edit', 'preview' => '/preview'];
             }
 
             protected function generateBillingOwnerDefault()

@@ -9,7 +9,7 @@ use Marktic\Newsletter\Newsletters\Models\NewsletterNewsletter;
  * @var NewsletterNewsletter                                           $item
  * @var \Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilter[] $filters
  * @var \Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypeInterface[] $filterTypes
- * @var array                                                          $urls preview|addFilter|deleteFilter|sendPreview
+ * @var array                                                          $urls view|edit|preview|addFilter|deleteFilter|sendPreview
  */
 $filters = $filters ?? [];
 $filterTypes = $filterTypes ?? [];

@@ -17,6 +17,12 @@ class NewsletterEditorTest extends AbstractTest
             self::assertStringContainsString('value="Weekly &quot;news&quot; &lt;update&gt;"', $markup);
             self::assertStringContainsString("formData.append('name',", $html);
             self::assertStringContainsString("getElementById('newsletter-name').addEventListener('input'", $html);
+            self::assertStringContainsString('id="html-source-open"', $html);
+            self::assertStringContainsString('name="content"', $html);
+            self::assertStringContainsString('Saved newsletter', $html);
+            foreach (['{{ first_name }}', '{{ last_name }}', '{{ email }}'] as $placeholder) {
+                self::assertStringContainsString('data-placeholder="' . $placeholder . '"', $html);
+            }
             self::assertStringNotContainsString('html, body {', $html);
         }
     }
@@ -32,11 +38,23 @@ class NewsletterEditorTest extends AbstractTest
         self::assertStringContainsString('<!DOCTYPE html PUBLIC', $html);
     }
 
-    private function renderEditor(string $editorDriver): string
+    public function test_editor_uses_only_definition_placeholders_and_escapes_tokens_and_labels(): void
+    {
+        foreach (['grapesjs', 'unlayer', 'beefree'] as $driver) {
+            $html = $this->renderEditor($driver, ['{{ organization "name" }}' => 'Name <label>']);
+            self::assertStringContainsString('data-placeholder="{{ organization &quot;name&quot; }}"', $html);
+            self::assertStringContainsString('Name &lt;label&gt;', $html);
+            self::assertStringNotContainsString('data-placeholder="{{ first_name }}"', $html);
+            self::assertStringNotContainsString('class="html-placeholder"', $this->renderEditor($driver, []));
+        }
+    }
+
+    private function renderEditor(string $editorDriver, ?array $placeholders = null): string
     {
         $item = new NewsletterNewsletter();
         $item->setId(7);
         $item->setName('Weekly "news" <update>');
+        $item->setContent('<html><body>Saved newsletter</body></html>');
         $editorOptions = [];
         ob_start();
         try {

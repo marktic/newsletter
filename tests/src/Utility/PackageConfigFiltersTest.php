@@ -4,6 +4,7 @@ namespace Marktic\Newsletter\Tests\Utility;
 
 use Marktic\Newsletter\NewsletterFilters\Actions\CreateNewsletterFilter;
 use Marktic\Newsletter\NewsletterFilters\Exceptions\InvalidFilter;
+use Marktic\Newsletter\NewsletterFilters\FilterTypes\ChannelFilterType;
 use Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypes;
 use Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilter;
 use Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilters;
@@ -41,6 +42,34 @@ class PackageConfigFiltersTest extends AbstractTest
         $this->expectException(InvalidFilter::class);
         CreateNewsletterFilter::for($this->newsletter('organizations', 'weekly'))
             ->withType('list')->withValues('1')->execute();
+    }
+
+    public function test_explicit_empty_types_configuration_preserves_builtin_registry(): void
+    {
+        $this->configure(['types' => []]);
+
+        self::assertSame([], PackageConfig::filterTypes());
+        self::assertSame(
+            ['list', 'channel', 'subscribed_after', 'subscribed_before'],
+            array_keys(FilterTypes::all())
+        );
+    }
+
+    public function test_configured_type_classes_are_unwrapped(): void
+    {
+        $this->configure(['types' => [ChannelFilterType::class]]);
+
+        self::assertSame([ChannelFilterType::class], PackageConfig::filterTypes());
+        self::assertInstanceOf(ChannelFilterType::class, FilterTypes::get('channel'));
+    }
+
+    public function test_configured_type_instances_are_preserved(): void
+    {
+        $type = new ChannelFilterType();
+        $this->configure(['types' => [$type]]);
+
+        self::assertSame([$type], PackageConfig::filterTypes());
+        self::assertSame($type, FilterTypes::get('channel'));
     }
 
     public function test_definitions_are_scoped_by_both_owner_and_newsletter_type(): void

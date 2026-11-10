@@ -60,6 +60,8 @@ The controller definition takes precedence over config for both the form and
 filter creation. Direct `CreateNewsletterFilter` calls use config unless given
 `withFilterTypes(FilterTypes::only([...]))`. Unavailable types are rejected.
 Existing saved filters remain readable and applicable even if no longer enabled.
+Filter configuration lists are read as plain arrays, including when wrapped in
+`Nip\Config\Config` by the host application's configuration.
 
 #### Inspiration
 

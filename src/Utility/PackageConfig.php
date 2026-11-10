@@ -4,6 +4,7 @@ namespace Marktic\Newsletter\Utility;
 
 use Exception;
 use Marktic\Newsletter\NewsletterServiceProvider;
+use Nip\Config\Config;
 use Nip\Utility\Traits\SingletonTrait;
 
 /**
@@ -65,7 +66,7 @@ class PackageConfig extends \ByTIC\PackageBase\Utility\PackageConfig
      */
     public static function filterTypes(): array
     {
-        return (array)static::instance()->get('filters.types', []);
+        return static::configArray('filters.types');
     }
 
     /**
@@ -73,12 +74,18 @@ class PackageConfig extends \ByTIC\PackageBase\Utility\PackageConfig
      */
     public static function availableFilterTypes(?string $owner, ?string $type): array
     {
-        $default = (array)static::instance()->get('filters.default', []);
+        $default = static::configArray('filters.default');
         if ($owner === null || $type === null) {
             return $default;
         }
 
-        return (array)static::instance()->get('filters.available.' . $owner . '.' . $type, $default);
+        return static::configArray('filters.available.' . $owner . '.' . $type, $default);
+    }
+
+    protected static function configArray(string $key, array $default = []): array
+    {
+        $value = static::instance()->get($key, $default);
+        return $value instanceof Config ? $value->toArray() : (array)$value;
     }
 
     /**

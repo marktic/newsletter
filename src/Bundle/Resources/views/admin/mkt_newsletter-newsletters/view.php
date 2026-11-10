@@ -2,39 +2,31 @@
 
 use Marktic\Newsletter\Newsletters\Models\NewsletterNewsletter;
 
-/** @var NewsletterNewsletter $item */
+/**
+ * Newsletter details page: inline preview on the left, filters and
+ * preview email cards in the right column.
+ *
+ * @var NewsletterNewsletter                                           $item
+ * @var \Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilter[] $filters
+ * @var \Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypeInterface[] $filterTypes
+ * @var array                                                          $urls preview|addFilter|deleteFilter|sendPreview
+ */
+$filters = $filters ?? [];
+$filterTypes = $filterTypes ?? [];
+$urls = $urls ?? [];
+$escape = static fn($value): string => htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+$trans = static fn(string $key): string => function_exists('translator')
+    ? (string)translator()->trans('mkt_newsletter-newsletters.' . $key)
+    : $key;
 $content = $item->getContent();
+$hasContent = $content !== null && trim($content) !== '';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title><?= htmlspecialchars($item->getName() ?? 'Newsletter', ENT_QUOTES, 'UTF-8') ?></title>
-    <style>
-        html, body { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; }
-        .newsletter-preview { display: flex; flex-direction: column; height: 100vh; }
-        .newsletter-preview-header { padding: 12px; background: #1a2433; color: #fff; }
-        .newsletter-preview-header h1 { margin: 0; font-size: 18px; }
-        .newsletter-preview-header p { margin: 6px 0 0; font-size: 14px; }
-        .newsletter-preview iframe { flex: 1; width: 100%; border: 0; background: #e8ecf0; }
-        .newsletter-preview-empty { padding: 24px; }
-    </style>
-</head>
-<body>
-<div class="newsletter-preview">
-    <header class="newsletter-preview-header">
-        <h1><?= htmlspecialchars($item->getName() ?? 'Newsletter', ENT_QUOTES, 'UTF-8') ?></h1>
-        <?php if ($item->getSubject()): ?>
-            <p><?= htmlspecialchars($item->getSubject(), ENT_QUOTES, 'UTF-8') ?></p>
-        <?php endif; ?>
-    </header>
-    <?php if ($content !== null && trim($content) !== ''): ?>
-        <iframe title="Newsletter preview" sandbox=""
-                srcdoc="<?= htmlspecialchars($content, ENT_QUOTES, 'UTF-8') ?>"></iframe>
-    <?php else: ?>
-        <p class="newsletter-preview-empty">No saved newsletter content to preview. Save your content in the editor first.</p>
-    <?php endif; ?>
+<div class="row mkt-newsletter-view">
+    <div class="col-lg-8 mb-4">
+        <?php require __DIR__ . '/modules/view/preview-card.php'; ?>
+    </div>
+    <div class="col-lg-4">
+        <?php require __DIR__ . '/modules/view/filters-cards.php'; ?>
+        <?php require __DIR__ . '/modules/view/send-preview-card.php'; ?>
+    </div>
 </div>
-</body>
-</html>

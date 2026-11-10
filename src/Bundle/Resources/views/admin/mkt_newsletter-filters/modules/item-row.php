@@ -7,5 +7,5 @@ use Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilter;
 <tr>
     <td><?= $item->getIdNewsletter(); ?></td>
     <td><?= $item->getType(); ?></td>
-    <td><?= json_encode($item->getValues()); ?></td>
+    <td><?= htmlspecialchars($item->getDescription(), ENT_QUOTES, 'UTF-8'); ?></td>
 </tr>

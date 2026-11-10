@@ -3,6 +3,8 @@
 namespace Marktic\Newsletter\NewsletterFilters\Models;
 
 use Marktic\Newsletter\Base\Models\Behaviours\HasId\RecordHasId;
+use Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypeInterface;
+use Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypes;
 use Marktic\Newsletter\Newsletters\Models\NewsletterNewsletter;
 
 /**
@@ -53,5 +55,19 @@ trait NewsletterFilterTrait
         } else {
             $this->values = $values;
         }
+    }
+
+    public function getFilterType(): ?FilterTypeInterface
+    {
+        return FilterTypes::has($this->type) ? FilterTypes::get($this->type) : null;
+    }
+
+    public function getDescription(): string
+    {
+        $type = $this->getFilterType();
+        if ($type === null) {
+            return (string)$this->type . ': ' . json_encode($this->getValues());
+        }
+        return $type->describe((array)$this->getValues());
     }
 }

@@ -11,6 +11,7 @@ use Marktic\Newsletter\Lists\Models\NewsletterList;
  * Trait NewsletterNewsletterTrait
  *
  * @method NewsletterList getNewsletterList()
+ * @method \Nip\Records\Collections\Associated|\Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilter[] getNewsletterFilters()
  */
 trait NewsletterNewsletterTrait
 {

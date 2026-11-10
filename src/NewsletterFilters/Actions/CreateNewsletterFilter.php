@@ -3,6 +3,7 @@
 namespace Marktic\Newsletter\NewsletterFilters\Actions;
 
 use Marktic\Newsletter\NewsletterFilters\Exceptions\InvalidFilter;
+use Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypeInterface;
 use Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypes;
 use Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilter;
 use Marktic\Newsletter\Utility\NewsletterModels;
@@ -19,6 +20,8 @@ class CreateNewsletterFilter
     protected ?string $type = null;
     protected mixed $values = null;
     protected ?RecordManager $repository = null;
+    /** @var FilterTypeInterface[]|null */
+    protected ?array $filterTypes = null;
 
     public static function for($newsletter): self
     {
@@ -46,6 +49,15 @@ class CreateNewsletterFilter
     }
 
     /**
+     * @param array<string, FilterTypeInterface> $types
+     */
+    public function withFilterTypes(array $types): self
+    {
+        $this->filterTypes = $types;
+        return $this;
+    }
+
+    /**
      * @return NewsletterFilter
      * @throws InvalidFilter
      */
@@ -56,7 +68,11 @@ class CreateNewsletterFilter
             throw new InvalidFilter('A saved newsletter is required to add filters');
         }
 
-        $type = FilterTypes::get($this->type);
+        $types = $this->filterTypes ?? FilterTypes::forNewsletter($this->newsletter);
+        if ($this->type === null || !isset($types[$this->type])) {
+            throw new InvalidFilter(sprintf('Newsletter filter type [%s] is not available', (string)$this->type));
+        }
+        $type = $types[$this->type];
         $values = $type->normalizeValues($this->values);
 
         /** @var NewsletterFilter $filter */

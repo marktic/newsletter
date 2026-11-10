@@ -69,6 +69,19 @@ class PackageConfig extends \ByTIC\PackageBase\Utility\PackageConfig
     }
 
     /**
+     * Enabled filter names for an owner and newsletter type.
+     */
+    public static function availableFilterTypes(?string $owner, ?string $type): array
+    {
+        $default = (array)static::instance()->get('filters.default', []);
+        if ($owner === null || $type === null) {
+            return $default;
+        }
+
+        return (array)static::instance()->get('filters.available.' . $owner . '.' . $type, $default);
+    }
+
+    /**
      * Class name (or container id) of the PreviewEmailSenderInterface implementation.
      */
     public static function previewEmailSender(): ?string

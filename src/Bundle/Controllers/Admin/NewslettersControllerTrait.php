@@ -46,7 +46,7 @@ trait NewslettersControllerTrait
         }
         $this->payload()->set('item', $item);
         $this->payload()->set('filters', $this->findNewsletterFilters($item));
-        $this->payload()->set('filterTypes', FilterTypes::all());
+        $this->payload()->set('filterTypes', $this->newsletterFilterTypes($item));
         $this->payload()->set('urls', $this->newsletterViewUrls($item));
     }
 
@@ -94,6 +94,7 @@ trait NewslettersControllerTrait
         $this->runNewsletterViewAction(
             $item,
             fn() => CreateNewsletterFilter::for($item)
+                ->withFilterTypes($this->newsletterFilterTypes($item))
                 ->withType($post->get('type'))
                 ->withValues($post->all()['values'] ?? null)
                 ->execute(),
@@ -153,6 +154,16 @@ trait NewslettersControllerTrait
         return FindFiltersForNewsletter::for($item)->fetch();
     }
 
+    /**
+     * Override to define the enabled filter types in the newsletter controller.
+     *
+     * @return array<string, \Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypeInterface>
+     */
+    protected function newsletterFilterTypes($item): array
+    {
+        return FilterTypes::forNewsletter($item);
+    }
+
     protected function newsletterViewUrls($item): array
     {
         $repository = NewsletterModels::newsletters();
@@ -180,7 +191,11 @@ trait NewslettersControllerTrait
             $editorData = $this->getRequest()->getPost('editor_data')
                 ?? $this->getRequest()->getPost('grapesjs_data');
             $content = $this->getRequest()->getPost('content');
+            $name = $this->getRequest()->getPost('name');
 
+            if ($name !== null) {
+                $item->setName($name);
+            }
             if ($editorData !== null) {
                 $item->setEditorData($editorData);
             }

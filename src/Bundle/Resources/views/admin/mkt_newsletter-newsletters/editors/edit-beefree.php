@@ -23,17 +23,11 @@ $editorData   = $item->getEditorData();
 $clientId     = $editorOptions['client_id']     ?? '';
 $clientSecret = $editorOptions['client_secret'] ?? '';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Newsletter Editor: <?= htmlspecialchars($item->getName() ?? '') ?></title>
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; }
+        #editor-wrap, #editor-wrap *, #editor-wrap *::before, #editor-wrap *::after { box-sizing: border-box; }
 
-        #editor-wrap { display: flex; flex-direction: column; height: 100vh; }
+        #editor-wrap { display: flex; flex-direction: column; height: 100vh; font-family: Arial, sans-serif; }
+        #newsletter-name { width: 220px; max-width: 100%; padding: 5px 8px; border: 1px solid #7f8c8d; border-radius: 3px; color: #1a2433; background: #fff; }
 
         /* ── Toolbar ──────────────────────────────────────────────────────── */
         #editor-toolbar {
@@ -58,12 +52,12 @@ $clientSecret = $editorOptions['client_secret'] ?? '';
         /* ── Beefree container ────────────────────────────────────────────── */
         #beefree-editor { flex: 1; }
     </style>
-</head>
-<body>
 <div id="editor-wrap">
     <div id="editor-toolbar">
         <div class="toolbar-title">
-            ✉&nbsp;<?= htmlspecialchars($item->getName() ?? 'Newsletter') ?>
+            <label for="newsletter-name">Newsletter name</label>
+            <input id="newsletter-name" name="name" type="text"
+                   value="<?= htmlspecialchars($item->getName() ?? '', ENT_QUOTES, 'UTF-8') ?>"/>
             <?php if ($item->getSubject()): ?>
                 <span>&nbsp;·&nbsp;<?= htmlspecialchars($item->getSubject()) ?></span>
             <?php endif; ?>
@@ -72,8 +66,8 @@ $clientSecret = $editorOptions['client_secret'] ?? '';
         <div class="toolbar-sep"></div>
 
         <span id="save-status"></span>
-        <button id="back-btn" onclick="history.back()">← Back</button>
-        <button id="save-btn">💾 Save</button>
+        <button type="button" id="back-btn" onclick="history.back()">← Back</button>
+        <button type="button" id="save-btn">💾 Save</button>
     </div>
 
     <div id="beefree-editor"></div>
@@ -83,6 +77,7 @@ $clientSecret = $editorOptions['client_secret'] ?? '';
 <script>
     /* ── Editor initialisation ───────────────────────────────────────── */
     var isDirty      = false;
+    document.getElementById('newsletter-name').addEventListener('input', function () { isDirty = true; });
     var beeInstance  = null;
     var pendingHtml  = null;
     var pendingJson  = null;
@@ -157,6 +152,7 @@ $clientSecret = $editorOptions['client_secret'] ?? '';
         statusEl.textContent = 'Saving…';
 
         var formData = new FormData();
+        formData.append('name', document.getElementById('newsletter-name').value);
         formData.append('editor_data', jsonFile);
         formData.append('content', htmlFile);
 
@@ -181,5 +177,3 @@ $clientSecret = $editorOptions['client_secret'] ?? '';
         });
     }
 </script>
-</body>
-</html>

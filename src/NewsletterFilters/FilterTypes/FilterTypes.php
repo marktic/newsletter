@@ -43,6 +43,28 @@ class FilterTypes
         static::$types[$type->getName()] = $type;
     }
 
+    /**
+     * @return FilterTypeInterface[]
+     */
+    public static function forNewsletter($newsletter): array
+    {
+        return static::only(PackageConfig::availableFilterTypes($newsletter->getOwner(), $newsletter->getType()));
+    }
+
+    /**
+     * @param string[] $names
+     * @return FilterTypeInterface[]
+     */
+    public static function only(array $names): array
+    {
+        $types = [];
+        foreach ($names as $name) {
+            $type = static::get($name);
+            $types[$type->getName()] = $type;
+        }
+        return $types;
+    }
+
     public static function has(?string $name): bool
     {
         return $name !== null && isset(static::all()[$name]);

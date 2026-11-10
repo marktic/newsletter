@@ -106,6 +106,17 @@ $projectId    = (int)($editorOptions['project_id'] ?? 0);
         }
     });
 
+    /* ── Bridge used by the shared "Edit HTML source" panel ──────────── */
+    /* Unlayer cannot import raw HTML, so the source panel is read-only-synced
+       (visual → source); setHtml is intentionally not provided. */
+    window.newsletterEditorBridge = {
+        getHtml: function (callback) {
+            unlayer.exportHtml(function (data) { callback(data.html); });
+        },
+        onChange: function (callback) { unlayer.addEventListener('design:updated', callback); },
+        save: function () { document.getElementById('save-btn').click(); }
+    };
+
     /* ── Ctrl+S / Cmd+S keyboard shortcut ───────────────────────────── */
     document.addEventListener('keydown', function (e) {
         if ((e.ctrlKey || e.metaKey) && e.key === 's') {

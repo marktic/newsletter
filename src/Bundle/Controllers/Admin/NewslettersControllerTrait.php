@@ -26,6 +26,11 @@ trait NewslettersControllerTrait
 
     private ?BaseDefinition $resolvedNewsletterDefinition = null;
 
+    protected function generateModelName(): string
+    {
+        return get_class(NewsletterModels::newsletters());
+    }
+
     protected function indexPrepareItems($items)
     {
         parent::indexPrepareItems($items);

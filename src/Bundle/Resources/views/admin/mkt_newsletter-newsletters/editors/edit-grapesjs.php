@@ -298,17 +298,8 @@ $editorData = $item->getEditorData() ?: '{}';
         document.getElementById('btn-desktop').classList.remove('active');
     });
 
-    /* ── Save handler ────────────────────────────────────────────────── */
-    document.getElementById('save-btn').addEventListener('click', function () {
-        var saveBtn = this;
-        var statusEl = document.getElementById('save-status');
-        saveBtn.disabled = true;
-        statusEl.style.color = '#bdc3c7';
-        statusEl.textContent = 'Saving…';
-
-        /* Project JSON (used to restore the editable state) */
-        var projectData = JSON.stringify(editor.getProjectData());
-
+    /* ── Email HTML builder ─────────────────────────────────────────── */
+    function buildEmailHtml() {
         /* Email-compatible HTML: inline CSS via the newsletter preset's
            built-in juice inliner, then wrap in a proper email document. */
         var bodyHtml = editor.runCommand('gjs-get-inlined-html') || '';
@@ -320,7 +311,7 @@ $editorData = $item->getEditorData() ?: '{}';
         }
 
         /* Build a full, email-client-ready HTML document */
-        var emailHtml = [
+        return [
             '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"',
             '  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
             '<html xmlns="http://www.w3.org/1999/xhtml" lang="en">',
@@ -338,6 +329,36 @@ $editorData = $item->getEditorData() ?: '{}';
             '</body>',
             '</html>',
         ].join('\n');
+    }
+
+    /* ── Bridge used by the shared "Edit HTML source" panel ──────────── */
+    window.newsletterEditorBridge = {
+        getHtml: function (callback) { callback(buildEmailHtml()); },
+        setHtml: function (html) {
+            /* Only the <body> (plus any <style> blocks) is editable content. */
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            var styles = Array.prototype.map.call(
+                doc.querySelectorAll('head style'),
+                function (style) { return style.outerHTML; }
+            ).join('\n');
+            editor.setStyle('');
+            editor.setComponents(styles + doc.body.innerHTML);
+        },
+        onChange: function (callback) { editor.on('update', callback); },
+        save: function () { document.getElementById('save-btn').click(); }
+    };
+
+    /* ── Save handler ────────────────────────────────────────────────── */
+    document.getElementById('save-btn').addEventListener('click', function () {
+        var saveBtn = this;
+        var statusEl = document.getElementById('save-status');
+        saveBtn.disabled = true;
+        statusEl.style.color = '#bdc3c7';
+        statusEl.textContent = 'Saving…';
+
+        /* Project JSON (used to restore the editable state) */
+        var projectData = JSON.stringify(editor.getProjectData());
+        var emailHtml = buildEmailHtml();
 
         var formData = new FormData();
         formData.append('name', document.getElementById('newsletter-name').value);

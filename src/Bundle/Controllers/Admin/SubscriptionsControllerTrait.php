@@ -17,6 +17,11 @@ trait SubscriptionsControllerTrait
 {
     use HasNewsletterOwnerTrait;
 
+    protected function generateModelName(): string
+    {
+        return get_class(NewsletterModels::subscriptions());
+    }
+
     public function export()
     {
         BuildCompleteSubscriptionsReport::fromRequestFilters($this->getRequestFilters())

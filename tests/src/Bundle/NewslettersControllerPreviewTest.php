@@ -44,6 +44,7 @@ class NewslettersControllerPreviewTest extends AbstractTest
         self::assertSame($controller->item, $controller->response->data['item']);
         self::assertSame(['filter'], $controller->response->data['filters']);
         self::assertSame([], $controller->response->data['filterTypes']);
+        self::assertSame('/edit', $controller->response->data['urls']['edit']);
         self::assertSame('/preview', $controller->response->data['urls']['preview']);
         self::assertFalse($controller->response->missing);
     }
@@ -260,7 +261,7 @@ class NewslettersControllerPreviewTest extends AbstractTest
 
             protected function newsletterViewUrls($item): array
             {
-                return ['view' => '/view', 'preview' => '/preview'];
+                return ['view' => '/view', 'edit' => '/edit', 'preview' => '/preview'];
             }
 
             protected function generateBillingOwnerDefault()

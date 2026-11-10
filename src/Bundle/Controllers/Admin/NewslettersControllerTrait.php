@@ -170,6 +170,7 @@ trait NewslettersControllerTrait
         $params = ['id' => $item->getId()];
         return [
             'view' => $repository->compileURL('view', $params),
+            'edit' => $repository->compileURL('edit', $params),
             'preview' => $repository->compileURL('preview', $params),
             'addFilter' => $repository->compileURL('addFilter', $params),
             'deleteFilter' => $repository->compileURL('deleteFilter', $params),

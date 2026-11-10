@@ -1,8 +1,12 @@
 # newsletters
 
 The newsletter listing provides **View** for a read-only preview of the saved
-newsletter and **Edit** to open the configured editor. Save editor changes before
-previewing them. The preview displays email HTML in a sandboxed frame.
+newsletter and **Edit** to open the configured editor. The view page also links
+to the editor. Its **Edit HTML source** dialog can replace the complete saved
+HTML and insert `{{ first_name }}`, `{{ last_name }}` and `{{ email }}` tokens.
+This package stores these tokens as-is; the host's sending integration must
+replace them with recipient data. Save editor changes before previewing them.
+The preview displays email HTML in a sandboxed frame.
 The editor toolbar lets you rename the newsletter; **Save** persists the name
 alongside the content and editor design in every supported editor.
 Editor views are fragments embedded in the admin layout, not standalone documents.

@@ -52,6 +52,14 @@ class NewsletterPreviewTest extends AbstractTest
         );
     }
 
+    public function test_view_links_to_the_editor(): void
+    {
+        $view = $this->renderView('<p>Hi</p>');
+
+        self::assertStringContainsString('href="/newsletters/edit?id=7"', $view);
+        self::assertMatchesRegularExpression('#>\s*Edit\s*</a>#', $view);
+    }
+
     public function test_view_renders_filter_cards_and_send_preview_card_in_right_column(): void
     {
         $filter = new NewsletterFilter();
@@ -89,7 +97,7 @@ class NewsletterPreviewTest extends AbstractTest
         $item = $this->item($content);
         $filterTypes = FilterTypes::all();
         $urls = [];
-        foreach (['view', 'preview', 'addFilter', 'deleteFilter', 'sendPreview'] as $action) {
+        foreach (['view', 'edit', 'preview', 'addFilter', 'deleteFilter', 'sendPreview'] as $action) {
             $urls[$action] = '/newsletters/' . $action . '?id=7';
         }
 

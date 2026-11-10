@@ -17,6 +17,12 @@ class NewsletterEditorTest extends AbstractTest
             self::assertStringContainsString('value="Weekly &quot;news&quot; &lt;update&gt;"', $markup);
             self::assertStringContainsString("formData.append('name',", $html);
             self::assertStringContainsString("getElementById('newsletter-name').addEventListener('input'", $html);
+            self::assertStringContainsString('id="html-source-open"', $html);
+            self::assertStringContainsString('name="content"', $html);
+            self::assertStringContainsString('Saved newsletter', $html);
+            foreach (['{{ first_name }}', '{{ last_name }}', '{{ email }}'] as $placeholder) {
+                self::assertStringContainsString('data-placeholder="' . $placeholder . '"', $html);
+            }
             self::assertStringNotContainsString('html, body {', $html);
         }
     }
@@ -37,6 +43,7 @@ class NewsletterEditorTest extends AbstractTest
         $item = new NewsletterNewsletter();
         $item->setId(7);
         $item->setName('Weekly "news" <update>');
+        $item->setContent('<html><body>Saved newsletter</body></html>');
         $editorOptions = [];
         ob_start();
         try {

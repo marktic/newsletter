@@ -6,12 +6,19 @@
                 <small class="text-muted"><?= $escape($item->getSubject()) ?></small>
             <?php endif; ?>
         </div>
-        <?php if (!empty($urls['preview'])): ?>
-            <a href="<?= $escape($urls['preview']) ?>" target="_blank" rel="noopener noreferrer"
-               class="btn btn-sm btn-outline-secondary">
-                <?= $escape($trans('preview.open_new_tab')) ?>
-            </a>
-        <?php endif; ?>
+        <div class="d-flex gap-2">
+            <?php if (!empty($urls['edit'])): ?>
+                <a href="<?= $escape($urls['edit']) ?>" class="btn btn-sm btn-primary">
+                    Edit
+                </a>
+            <?php endif; ?>
+            <?php if (!empty($urls['preview'])): ?>
+                <a href="<?= $escape($urls['preview']) ?>" target="_blank" rel="noopener noreferrer"
+                   class="btn btn-sm btn-outline-secondary">
+                    <?= $escape($trans('preview.open_new_tab')) ?>
+                </a>
+            <?php endif; ?>
+        </div>
     </div>
     <div class="card-body p-0">
         <?php if ($hasContent): ?>

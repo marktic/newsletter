@@ -45,26 +45,26 @@ require $partialPath;
         cursor: pointer;
     }
 
+    /* Docked (non-modal) so the visual editor stays visible while typing. */
     #html-source-dialog[hidden] { display: none; }
     #html-source-dialog {
         position: fixed;
         z-index: 10001;
-        inset: 0;
+        top: 0;
+        bottom: 0;
+        left: 0;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-        background: rgba(0, 0, 0, .6);
+        width: min(640px, 50vw);
+        box-shadow: 4px 0 16px rgba(0, 0, 0, .35);
         font-family: Arial, sans-serif;
     }
     #html-source-panel {
         display: flex;
+        flex: 1;
         flex-direction: column;
         box-sizing: border-box;
-        width: min(1100px, 100%);
-        height: min(800px, 100%);
+        min-width: 0;
         padding: 16px;
-        border-radius: 6px;
         background: #fff;
     }
     #html-source-panel header,
@@ -83,6 +83,7 @@ require $partialPath;
     #html-source-panel textarea {
         flex: 1;
         width: 100%;
+        box-sizing: border-box;
         margin: 12px 0;
         padding: 12px;
         resize: none;
@@ -94,9 +95,10 @@ require $partialPath;
         border-radius: 4px;
         cursor: pointer;
     }
+    #html-source-sync { font-size: 12px; color: #7f8c8d; }
 </style>
 <button type="button" id="html-source-open" aria-haspopup="dialog">Edit HTML source</button>
-<div id="html-source-dialog" hidden role="dialog" aria-modal="true" aria-labelledby="html-source-title">
+<div id="html-source-dialog" hidden role="dialog" aria-modal="false" aria-labelledby="html-source-title">
     <section id="html-source-panel">
         <header>
             <strong id="html-source-title">Edit complete HTML source</strong>
@@ -112,7 +114,7 @@ require $partialPath;
             </div>
             <textarea name="content" aria-label="Newsletter HTML source" spellcheck="false"><?= htmlspecialchars($item->getContent() ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
             <footer>
-                <span>Saving replaces the newsletter HTML used for previews and sending.</span>
+                <span id="html-source-sync">Saving replaces the newsletter HTML used for previews and sending.</span>
                 <button type="submit" style="background:#27ae60;color:#fff">Save HTML</button>
             </footer>
         </form>
@@ -121,24 +123,91 @@ require $partialPath;
 <script>
     (function () {
         var dialog = document.getElementById('html-source-dialog');
+        var form = dialog.querySelector('form');
+        var source = dialog.querySelector('textarea[name="content"]');
+        var syncStatus = document.getElementById('html-source-sync');
+        /* Exposed by the active editor partial (see editors/edit-*.php). */
+        var bridge = window.newsletterEditorBridge || null;
+        var canPushToEditor = !!(bridge && typeof bridge.setHtml === 'function');
+        var pushTimer = null;
+        var pullTimer = null;
+
+        if (bridge) {
+            syncStatus.textContent = canPushToEditor
+                ? 'Changes are synced with the visual editor in real time.'
+                : 'Visual editor changes are reflected here. This editor cannot import HTML edits.';
+        }
+
+        function pullFromEditor() {
+            /* Never overwrite what the user is currently typing. */
+            if (!bridge || dialog.hidden || document.activeElement === source) {
+                return;
+            }
+            bridge.getHtml(function (html) {
+                if (document.activeElement !== source && source.value !== html) {
+                    source.value = html;
+                }
+            });
+        }
+
+        function pushToEditor() {
+            clearTimeout(pushTimer);
+            pushTimer = null;
+            if (canPushToEditor) {
+                bridge.setHtml(source.value);
+            }
+        }
+
+        function schedulePush() {
+            if (!canPushToEditor) {
+                return;
+            }
+            clearTimeout(pushTimer);
+            pushTimer = setTimeout(pushToEditor, 300);
+        }
+
+        if (bridge && typeof bridge.onChange === 'function') {
+            bridge.onChange(function () {
+                clearTimeout(pullTimer);
+                pullTimer = setTimeout(pullFromEditor, 300);
+            });
+        }
+
         document.getElementById('html-source-open').addEventListener('click', function () {
             dialog.hidden = false;
+            pullFromEditor();
         });
         document.getElementById('html-source-close').addEventListener('click', function () {
+            if (pushTimer) {
+                pushToEditor();
+            }
             dialog.hidden = true;
         });
-        var source = dialog.querySelector('textarea[name="content"]');
+
+        source.addEventListener('input', schedulePush);
+        source.addEventListener('blur', function () {
+            if (pushTimer) {
+                pushToEditor();
+            }
+        });
+
         dialog.querySelectorAll('.html-placeholder').forEach(function (button) {
             button.addEventListener('click', function () {
                 var start = source.selectionStart;
                 var end = source.selectionEnd;
                 source.setRangeText(button.dataset.placeholder, start, end, 'end');
                 source.focus();
+                schedulePush();
             });
         });
-        dialog.addEventListener('click', function (event) {
-            if (event.target === dialog) {
-                dialog.hidden = true;
+
+        form.addEventListener('submit', function (event) {
+            /* When the editor accepts HTML, save through it so the editor
+               state (editor_data) and the HTML content stay consistent. */
+            if (canPushToEditor && typeof bridge.save === 'function') {
+                event.preventDefault();
+                pushToEditor();
+                bridge.save();
             }
         });
     })();

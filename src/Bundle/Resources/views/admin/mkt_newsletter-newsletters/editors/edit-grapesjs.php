@@ -5,20 +5,14 @@ use Marktic\Newsletter\Newsletters\Models\NewsletterNewsletter;
 /** @var NewsletterNewsletter $item */
 $editorData = $item->getEditorData() ?: '{}';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Newsletter Editor: <?= htmlspecialchars($item->getName() ?? '') ?></title>
     <!-- GrapesJS 0.21 + Newsletter Preset (email-compatible pair) -->
     <link rel="stylesheet" href="https://unpkg.com/grapesjs@0.21.13/dist/css/grapes.min.css"/>
     <link rel="stylesheet" href="https://unpkg.com/grapesjs-preset-newsletter@1.0.1/dist/index.css"/>
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; }
+        #editor-wrap, #editor-wrap *, #editor-wrap *::before, #editor-wrap *::after { box-sizing: border-box; }
 
-        #editor-wrap { display: flex; flex-direction: column; height: 100vh; }
+        #editor-wrap { display: flex; flex-direction: column; height: 100vh; font-family: Arial, sans-serif; }
+        #newsletter-name { width: 220px; max-width: 100%; padding: 5px 8px; border: 1px solid #7f8c8d; border-radius: 3px; color: #1a2433; background: #fff; }
 
         /* ── Toolbar ──────────────────────────────────────────────────────── */
         #editor-toolbar {
@@ -50,12 +44,12 @@ $editorData = $item->getEditorData() ?: '{}';
         .gjs-cv-canvas { background-color: #e8ecf0 !important; }
         .gjs-frame-wrapper { background: #fff; }
     </style>
-</head>
-<body>
 <div id="editor-wrap">
     <div id="editor-toolbar">
         <div class="toolbar-title">
-            ✉&nbsp;<?= htmlspecialchars($item->getName() ?? 'Newsletter') ?>
+            <label for="newsletter-name">Newsletter name</label>
+            <input id="newsletter-name" name="name" type="text"
+                   value="<?= htmlspecialchars($item->getName() ?? '', ENT_QUOTES, 'UTF-8') ?>"/>
             <?php if ($item->getSubject()): ?>
                 <span>&nbsp;·&nbsp;<?= htmlspecialchars($item->getSubject()) ?></span>
             <?php endif; ?>
@@ -63,14 +57,14 @@ $editorData = $item->getEditorData() ?: '{}';
 
         <div class="toolbar-sep"></div>
 
-        <button id="btn-desktop" class="active" title="Desktop view (600px)">🖥 Desktop</button>
-        <button id="btn-mobile" title="Mobile view (320px)">📱 Mobile</button>
+        <button type="button" id="btn-desktop" class="active" title="Desktop view (600px)">🖥 Desktop</button>
+        <button type="button" id="btn-mobile" title="Mobile view (320px)">📱 Mobile</button>
 
         <div class="toolbar-sep"></div>
 
         <span id="save-status"></span>
-        <button id="back-btn" onclick="history.back()">← Back</button>
-        <button id="save-btn">💾 Save</button>
+        <button type="button" id="back-btn" onclick="history.back()">← Back</button>
+        <button type="button" id="save-btn">💾 Save</button>
     </div>
 
     <div id="gjs"></div>
@@ -126,42 +120,97 @@ $editorData = $item->getEditorData() ?: '{}';
         {
             id: 'email-row',
             label: 'Row',
+            icon: '<rect x="3" y="6" width="26" height="20" rx="2"/>',
             content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td style="padding:10px 0;"></td></tr></tbody></table>',
         },
         {
             id: 'email-two-columns',
             label: '2 Columns',
+            icon: '<rect x="3" y="6" width="26" height="20" rx="2"/><path d="M16 6v20"/>',
             content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="50%" valign="top" style="padding:10px;"></td><td width="50%" valign="top" style="padding:10px;"></td></tr></tbody></table>',
         },
         {
             id: 'email-heading',
             label: 'Heading',
+            icon: '<path d="M7 6v20M25 6v20M7 16h18"/>',
             content: '<h2 style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:24px;line-height:30px;color:#1a2433;">Heading</h2>',
         },
         {
             id: 'email-text',
             label: 'Text',
+            icon: '<path d="M4 7h24M4 13h24M4 19h24M4 25h16"/>',
             content: '<p style="margin:0 0 16px;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#333333;">Write your text here.</p>',
         },
         {
             id: 'email-button',
             label: 'Button',
+            icon: '<rect x="3" y="9" width="26" height="14" rx="4"/><path d="M10 16h12"/>',
             content: '<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center"><tbody><tr><td align="center" bgcolor="#2980b9" style="border-radius:3px;"><a href="#" style="display:inline-block;padding:12px 28px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;color:#ffffff;text-decoration:none;">Button text</a></td></tr></tbody></table>',
         },
         {
             id: 'email-divider',
             label: 'Divider',
+            icon: '<path d="M3 16h26M8 7h16M8 25h16"/>',
             content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td style="padding:12px 0;border-bottom:1px solid #e0e0e0;font-size:1px;line-height:1px;">&nbsp;</td></tr></tbody></table>',
         },
         {
             id: 'email-spacer',
             label: 'Spacer',
+            icon: '<path d="M3 5h26M3 27h26M16 9v14m-4-10 4-4 4 4m-8 6 4 4 4-4"/>',
             content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="24" style="height:24px;font-size:1px;line-height:24px;">&nbsp;</td></tr></tbody></table>',
+        },
+        {
+            id: 'email-three-columns',
+            label: '3 Columns',
+            icon: '<rect x="2" y="6" width="28" height="20" rx="2"/><path d="M11 6v20M21 6v20"/>',
+            content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="33%" valign="top" style="padding:10px;">Column 1</td><td width="34%" valign="top" style="padding:10px;">Column 2</td><td width="33%" valign="top" style="padding:10px;">Column 3</td></tr></tbody></table>',
+        },
+        {
+            id: 'email-image',
+            label: 'Image',
+            icon: '<rect x="3" y="4" width="26" height="24" rx="2"/><circle cx="10" cy="11" r="3"/><path d="m3 25 9-9 5 5 5-9 7 13"/>',
+            content: '<img src="https://placehold.co/600x240/png" alt="Describe your image" width="600" style="display:block;width:100%;max-width:600px;height:auto;border:0;"/>',
+        },
+        {
+            id: 'email-image-text',
+            label: 'Image + Text',
+            category: 'Sections',
+            icon: '<rect x="2" y="7" width="12" height="18"/><path d="M18 9h12M18 16h12M18 23h9M3 22l5-6 5 6"/>',
+            content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td width="40%" valign="top" style="padding:12px;"><img src="https://placehold.co/240x180/png" alt="Describe your image" width="240" style="display:block;width:100%;max-width:240px;height:auto;border:0;"/></td><td width="60%" valign="top" style="padding:12px;font-family:Arial,Helvetica,sans-serif;color:#333333;"><h2 style="margin:0 0 12px;font-size:22px;line-height:28px;">Featured story</h2><p style="margin:0;font-size:16px;line-height:24px;">Share your latest news here.</p></td></tr></tbody></table>',
+        },
+        {
+            id: 'email-header',
+            label: 'Header',
+            category: 'Sections',
+            icon: '<rect x="3" y="4" width="26" height="24" rx="2"/><path d="M3 13h26M9 8h14"/>',
+            content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td align="center" bgcolor="#1a2433" style="padding:28px;font-family:Arial,Helvetica,sans-serif;color:#ffffff;"><h1 style="margin:0;font-size:28px;line-height:36px;">Your newsletter</h1><p style="margin:8px 0 0;font-size:14px;line-height:22px;">The latest news from our team</p></td></tr></tbody></table>',
+        },
+        {
+            id: 'email-quote',
+            label: 'Quote',
+            category: 'Sections',
+            icon: '<path d="M5 8h9v10H8v6H4v-9l1-7zm15 0h9v10h-6v6h-4v-9l1-7z"/>',
+            content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td style="padding:20px;border-left:4px solid #2980b9;background-color:#f5f7fa;font-family:Arial,Helvetica,sans-serif;color:#333333;"><p style="margin:0 0 12px;font-size:18px;line-height:28px;font-style:italic;">&ldquo;Add an inspiring quote or customer testimonial.&rdquo;</p><p style="margin:0;font-size:14px;line-height:22px;">&mdash; Author name</p></td></tr></tbody></table>',
+        },
+        {
+            id: 'email-social',
+            label: 'Social Links',
+            category: 'Sections',
+            icon: '<circle cx="7" cy="16" r="4"/><circle cx="25" cy="7" r="4"/><circle cx="25" cy="25" r="4"/><path d="m11 14 10-5M11 18l10 5"/>',
+            content: '<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center"><tbody><tr><td style="padding:12px;font-family:Arial,Helvetica,sans-serif;font-size:14px;"><a href="https://www.facebook.com/" style="color:#2980b9;">Facebook</a></td><td style="padding:12px;font-family:Arial,Helvetica,sans-serif;font-size:14px;"><a href="https://www.instagram.com/" style="color:#2980b9;">Instagram</a></td><td style="padding:12px;font-family:Arial,Helvetica,sans-serif;font-size:14px;"><a href="https://www.linkedin.com/" style="color:#2980b9;">LinkedIn</a></td></tr></tbody></table>',
+        },
+        {
+            id: 'email-footer',
+            label: 'Footer',
+            category: 'Sections',
+            icon: '<rect x="3" y="4" width="26" height="24" rx="2"/><path d="M3 19h26M9 24h14"/>',
+            content: '<table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td align="center" bgcolor="#f5f7fa" style="padding:24px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:20px;color:#888888;"><p style="margin:0 0 8px;">Your company &middot; Your mailing address</p><p style="margin:0;">You received this email because you subscribed to our newsletter.</p><p style="margin:8px 0 0;"><a href="#unsubscribe" style="color:#888888;">Unsubscribe</a></p></td></tr></tbody></table>',
         },
     ].forEach(function (block) {
         editor.BlockManager.add(block.id, {
             label: block.label,
-            category: 'Basic',
+            media: '<svg viewBox="0 0 32 32" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' + block.icon + '</svg>',
+            category: block.category || 'Basic',
             content: block.content,
         });
     });
@@ -220,6 +269,7 @@ $editorData = $item->getEditorData() ?: '{}';
 
     /* ── Track unsaved changes ───────────────────────────────────────── */
     var isDirty = false;
+    document.getElementById('newsletter-name').addEventListener('input', function () { isDirty = true; });
     editor.on('change:changesCount', function () { isDirty = true; });
     window.addEventListener('beforeunload', function (e) {
         if (isDirty) {
@@ -290,6 +340,7 @@ $editorData = $item->getEditorData() ?: '{}';
         ].join('\n');
 
         var formData = new FormData();
+        formData.append('name', document.getElementById('newsletter-name').value);
         formData.append('editor_data', projectData);
         formData.append('content', emailHtml);
 
@@ -314,5 +365,3 @@ $editorData = $item->getEditorData() ?: '{}';
         });
     });
 </script>
-</body>
-</html>

@@ -6,6 +6,7 @@ use Marktic\Newsletter\NewsletterFilters\Actions\ApplyNewsletterFiltersToQuery;
 use Marktic\Newsletter\NewsletterFilters\Actions\CreateNewsletterFilter;
 use Marktic\Newsletter\NewsletterFilters\Actions\DeleteNewsletterFilter;
 use Marktic\Newsletter\NewsletterFilters\Exceptions\InvalidFilter;
+use Marktic\Newsletter\NewsletterFilters\FilterTypes\FilterTypes;
 use Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilter;
 use Marktic\Newsletter\NewsletterFilters\Models\NewsletterFilters;
 use Marktic\Newsletter\Tests\AbstractTest;
@@ -21,6 +22,7 @@ class NewsletterFilterActionsTest extends AbstractTest
         $repository->shouldReceive('getNew')->once()->andReturn($filter);
 
         $result = CreateNewsletterFilter::for($this->newsletter(12))
+            ->withFilterTypes(FilterTypes::only(['list']))
             ->withType('list')
             ->withValues('4,9')
             ->withRepository($repository)
@@ -40,7 +42,22 @@ class NewsletterFilterActionsTest extends AbstractTest
 
         $this->expectException(InvalidFilter::class);
         CreateNewsletterFilter::for($this->newsletter(12))
+            ->withFilterTypes(FilterTypes::only(['list']))
             ->withType('nope')
+            ->withValues('1')
+            ->withRepository($repository)
+            ->execute();
+    }
+
+    public function test_create_rejects_registered_but_unavailable_type_without_saving(): void
+    {
+        $repository = Mockery::mock(NewsletterFilters::class);
+        $repository->shouldNotReceive('getNew');
+
+        $this->expectException(InvalidFilter::class);
+        CreateNewsletterFilter::for($this->newsletter(12))
+            ->withFilterTypes([])
+            ->withType('list')
             ->withValues('1')
             ->withRepository($repository)
             ->execute();
@@ -98,6 +115,16 @@ class NewsletterFilterActionsTest extends AbstractTest
             public function getId(): ?int
             {
                 return $this->id;
+            }
+
+            public function getOwner(): ?string
+            {
+                return null;
+            }
+
+            public function getType(): ?string
+            {
+                return null;
             }
         };
     }
